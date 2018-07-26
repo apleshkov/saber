@@ -91,7 +91,7 @@ indentation:
 
 ```
 
-Also see [config.example.yml](blob/master/config.example.yml).
+Also see [config.example.yml](config.example.yml).
 
 ## License
 
