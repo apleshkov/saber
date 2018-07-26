@@ -39,10 +39,33 @@ class DataFactoryGetterTests: XCTestCase {
         )
     }
 
-    func testValueInjections() {
+    func testValueInjections1() {
         var decl = TypeDeclaration(name: "Foo")
         decl.memberInjections = [
             MemberInjection(name: "bar", typeResolver: .explicit(TypeUsage(name: "Bar")))
+        ]
+        let getter = ContainerDataFactory().getter(of: decl, accessLevel: "open")
+        XCTAssertEqual(
+            getter,
+            [
+                "open var foo: Foo {",
+                "    var foo = self.makeFoo()",
+                "    self.injectTo(foo: &foo)",
+                "    return foo",
+                "}"
+            ]
+        )
+    }
+    
+    func testValueInjections2() {
+        var decl = TypeDeclaration(name: "Foo")
+        decl.methodInjections = [
+            InstanceMethodInjection(
+                methodName: "set",
+                args: [
+                    FunctionInvocationArgument(name: nil, typeResolver: .explicit(TypeUsage(name: "Bar")))
+                ]
+            )
         ]
         let getter = ContainerDataFactory().getter(of: decl, accessLevel: "open")
         XCTAssertEqual(

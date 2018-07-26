@@ -167,7 +167,7 @@ public class ContainerDataFactory {
         }
         let maker = "self.\(memberName(of: some, prefix: "make"))()"
         let name = memberName(of: some)
-        if let decl = some as? TypeDeclaration, decl.memberInjections.count > 0 {
+        if let decl = some as? TypeDeclaration, decl.memberInjections.count > 0 || decl.methodInjections.count > 0 {
             let strDecl = decl.isReference ? "let" : "var"
             body.append("\(strDecl) \(name) = \(maker)")
             let providedValue = decl.isReference ? name : "&\(name)"
