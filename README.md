@@ -77,6 +77,22 @@ Generate containers from Xcode project
 	Could be 'info' (by default) or 'debug' (optional)
 ```
 
+### Configuration
+
+Provide it via `--config`.
+
+```
+# Access level for generated classes (internal by default)
+accessLevel: internal # public, open, ...
+# Identation for generated files (4 spaces by default)
+indentation:
+    type: space # or tab
+    size: 4
+
+```
+
+Also see [config.example.yml](blob/master/config.example.yml).
+
 ## License
 
 MIT
