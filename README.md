@@ -79,8 +79,7 @@ Generate containers from Xcode project
 
 ### Configuration
 
-Provide it via `--config`.
-
+Provide it via `--config` as text or file:
 ```
 # Access level for generated classes (internal by default)
 accessLevel: internal # public, open, ...
@@ -91,7 +90,7 @@ indentation:
 
 ```
 
-Also see [config.example.yml](config.example.yml).
+Example configuration: [config.example.yml](config.example.yml)
 
 ## License
 
