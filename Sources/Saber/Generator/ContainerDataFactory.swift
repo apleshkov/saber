@@ -195,7 +195,7 @@ public class ContainerDataFactory {
         case .some(let args):
             var lines: [String] = ["private func \(memberName(of: decl, prefix: "make"))() -> \(decl.fullName(modular: true)) {"]
             let invocationArgs: [String] = args.map {
-                let valueName = accessor(of: $0.typeResolver, owner: "self")
+                let valueName = accessor(of: $0.typeResolver, owner: "self", isLazy: $0.isLazy)
                 guard let name = $0.name else {
                     return valueName
                 }
