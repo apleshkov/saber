@@ -1,10 +1,8 @@
-# saber
+# Saber
 
 Dependency injection (DI) & Inversion of Control (IoC) command line tool for Swift based on code generation.
 
-No frameworks required.
-
-Uses [SourceKitten](https://github.com/jpsim/SourceKitten) to parse sources.
+_Saber_ requires __no__ frameworks, just parses sources (via [SourceKitten](https://github.com/jpsim/SourceKitten)), finds [annotations](wiki/Annotations) and generates [DI-containers](wiki/Container).
 
 ## Installation
 
@@ -32,6 +30,10 @@ Available commands:
 
 ### sources
 
+The tool traverses swift-files `--from` __recursively__ and generates container classes to `--out`.
+
+Example: `saber --workDir . --from Sources --out Sources/Saber`
+
 ```
 $ saber help sources
 Generate containers from sources
@@ -53,6 +55,10 @@ Generate containers from sources
 ```
 
 ### xcodeproj
+
+The tool parses Xcode project at `--path`, traverses enumerated `--targets` and generates container classes to `--out`.
+
+Example: `saber --workDir . --path MyProject.xcodeproj --targets Target1,Target2 --out Sources/Saber`
 
 ```
 $ saber help xcodeproj
