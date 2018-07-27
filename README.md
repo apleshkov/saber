@@ -1,8 +1,12 @@
 # Saber
 
-Dependency injection (DI) & Inversion of Control (IoC) command line tool for Swift based on code generation.
+Dependency injection (DI) & Inversion of Control (IoC) _command line_ tool for Swift based on __code generation__.
 
-_Saber_ requires __no__ frameworks, just parses sources (via [SourceKitten](https://github.com/jpsim/SourceKitten)), finds [annotations](wiki/Annotations) and generates [DI-containers](wiki/Container).
+_Saber_ requires __no__ frameworks, just parses sources (via [SourceKitten](https://github.com/jpsim/SourceKitten)), finds [annotations](https://github.com/apleshkov/saber/wiki/Annotations) and generates [DI-containers](https://github.com/apleshkov/saber/wiki/Container).
+
+## Documentation
+
+Please, see [wiki](https://github.com/apleshkov/saber/wiki).
 
 ## Installation
 
