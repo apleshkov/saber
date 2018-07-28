@@ -2,7 +2,7 @@
 
 import PackageDescription
 
-let package = Package(
+var package = Package(
     name: "Saber",
     products: [
         .library(
@@ -13,7 +13,6 @@ let package = Package(
     dependencies: [
         .package(url: "https://github.com/jpsim/SourceKitten.git", from: "0.21.0"),
         .package(url: "https://github.com/Carthage/Commandant.git", from: "0.14.0"),
-        .package(url: "https://github.com/xcode-project-manager/xcodeproj.git", from: "5.0.0-rc1")
     ],
     targets: [
         .target(
@@ -22,7 +21,7 @@ let package = Package(
         ),
         .target(
             name: "SaberCLI",
-            dependencies: ["Saber", "Commandant", "xcodeproj"]
+            dependencies: ["Saber", "Commandant"]
         ),
         .testTarget(
             name: "SaberTests",
@@ -30,3 +29,10 @@ let package = Package(
         )
     ]
 )
+
+#if os(OSX)
+package.dependencies.append(
+    .package(url: "https://github.com/xcode-project-manager/xcodeproj.git", from: "5.0.0-rc1")
+)
+package.targets[1].dependencies.append("xcodeproj")
+#endif

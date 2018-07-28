@@ -5,34 +5,36 @@
 //  Created by andrey.pleshkov on 02/07/2018.
 //
 
+#if os(OSX)
+
 import Foundation
 import Saber
 import Commandant
 import Result
 
 struct XcodeProjectCommand: CommandProtocol {
-
+    
     let verb = "xcodeproj"
     let function = "Generate containers from Xcode project"
-
+    
     private let defaultConfig: SaberConfiguration
-
+    
     init(config: SaberConfiguration) {
         self.defaultConfig = config
     }
-
+    
     struct Options: OptionsProtocol {
-
+        
         let url: URL
         
         let targetNames: Set<String>
-
+        
         let outDir: URL
-
+        
         let rawConfig: String
         
         let logLevel: String
-
+        
         static func create(workDir: String)
             -> (_ path: String)
             -> (_ rawTargets: String)
@@ -67,7 +69,7 @@ struct XcodeProjectCommand: CommandProtocol {
                     }
                 }
         }
-
+        
         static func evaluate(_ m: CommandMode) -> Result<Options, CommandantError<Throwable>> {
             return create
                 <*> m <| Option(key: "workDir", defaultValue: "", usage: "Working directory (optional)")
@@ -78,7 +80,7 @@ struct XcodeProjectCommand: CommandProtocol {
                 <*> m <| Option(key: "log", defaultValue: "info", usage: "Could be 'info' (by default) or 'debug' (optional)")
         }
     }
-
+    
     func run(_ options: Options) -> Result<(), Throwable> {
         do {
             Logger = ConsoleLogger(level: try LogLevel.make(from: options.logLevel))
@@ -118,3 +120,5 @@ struct XcodeProjectCommand: CommandProtocol {
         }
     }
 }
+
+#endif

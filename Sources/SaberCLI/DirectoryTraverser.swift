@@ -6,30 +6,32 @@
 //
 
 import Foundation
-import Basic
 import Saber
 
-private let fs = localFileSystem
+private let fm = FileManager.default
 
 enum DirectoryTraverser {
 
-    static func traverse(_ pathString: String, fn: (_ path: AbsolutePath) throws -> ()) throws {
-        try traverse(AbsolutePath(pathString), fn: fn)
-    }
-
-    static func traverse(_ path: AbsolutePath, fn: (_ path: AbsolutePath) throws -> ()) throws {
-        if fs.isFile(path) {
+    static func traverse(_ path: String, fn: (_ path: String) throws -> ()) throws {
+        var isDirectoryObjC: ObjCBool = false
+        guard fm.fileExists(atPath: path, isDirectory: &isDirectoryObjC) else {
+            Logger?.debug("Ignoring \(path): not exist")
+            return
+        }
+        let isDirectory = isDirectoryObjC.boolValue
+        if !isDirectory {
             try fn(path)
             return
         }
-        guard fs.isDirectory(path) else {
-            Logger?.debug("Ignoring \(path.asString): not a directory")
+        guard isDirectory else {
+            Logger?.debug("Ignoring \(path): not a directory")
             return
         }
-        Logger?.info("Traversing \(path.asString)...")
-        try fs.getDirectoryContents(path).forEach {
-            let entry = path.appending(component: $0)
-            try traverse(entry, fn: fn)
+        Logger?.info("Traversing \(path)...")
+        let directoryContents = try fm.contentsOfDirectory(atPath: path)
+        for entry in directoryContents {
+            let p = URL(fileURLWithPath: path).appendingPathComponent(entry).path
+            try traverse(p, fn: fn)
         }
     }
 }

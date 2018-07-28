@@ -2,6 +2,7 @@ PREFIX ?= /usr/local
 INST_FOLDER = $(PREFIX)/bin
 
 SWIFT_BUILD_FLAGS = --configuration release
+SWIFT_TEST_FLAGS = -Xswiftc -DTEST
 
 BIN_PATH = $(shell swift build $(SWIFT_BUILD_FLAGS) --show-bin-path)
 
@@ -23,7 +24,14 @@ uninstall:
 	rm -rf "$(INST_FOLDER)/saber"
 
 test:
-	swift test
+	swift test $(SWIFT_TEST_FLAGS)
+
+docker_linux_test:
+	swift test --generate-linuxmain
+	docker run --rm -i -t --volume "$(shell pwd):/package" --workdir "/package" swift:4.1 /bin/bash -c "make test"
+
+xcodeproj:
+	swift package generate-xcodeproj --xcconfig-overrides Saber.xcconfig
 
 get_version:
 	@echo "$(CURRENT_VERSION)"

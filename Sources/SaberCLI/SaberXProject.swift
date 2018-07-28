@@ -5,6 +5,8 @@
 //  Created by Andrew Pleshkov on 02/07/2018.
 //
 
+#if os(OSX)
+
 import Foundation
 import Basic
 import xcodeproj
@@ -50,3 +52,5 @@ class SaberXProject {
         let filePaths: [String]
     }
 }
+
+#endif

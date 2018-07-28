@@ -12,7 +12,9 @@ import Saber
 let config = SaberConfiguration.default
 
 let registry = CommandRegistry<Throwable>()
+#if os(OSX)
 registry.register(XcodeProjectCommand(config: config))
+#endif
 registry.register(SourcesCommand(config: config))
 registry.register(VersionCommand())
 registry.register(HelpCommand(registry: registry))

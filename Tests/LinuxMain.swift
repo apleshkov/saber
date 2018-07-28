@@ -3,5 +3,6 @@ import XCTest
 import SaberTests
 
 var tests = [XCTestCaseEntry]()
-tests += SaberTests.allTests()
+tests += SaberTests.__allTests()
+
 XCTMain(tests)
