@@ -37,49 +37,45 @@ class FactoryProvidedTests: XCTestCase {
         let containers = try! ContainerFactory(repo: repo).make()
         let loggerProvider = TypeDeclaration(name: "LoggerProvider", isReference: true)
         XCTAssertEqual(
-            containers,
+            containers.map { $0.services.test_sorted() },
             [
-                Container(
-                    name: "App",
-                    protocolName: "AppConfig",
-                    services: [
-                        Service(
-                            typeResolver: .explicit(loggerProvider),
-                            storage: .cached
+                [
+                    Service(
+                        typeResolver: .explicit(loggerProvider),
+                        storage: .cached
+                    ),
+                    Service(
+                        typeResolver: .provided(
+                            TypeUsage(name: "Logging"),
+                            by: TypeProvider(
+                                decl: loggerProvider,
+                                methodName: "provide"
+                            )
                         ),
-                        Service(
-                            typeResolver: .explicit(
-                                TypeDeclaration(
-                                    name: "NetworkManager",
-                                    isReference: true,
-                                    memberInjections: [
-                                        MemberInjection(
-                                            name: "logger",
-                                            typeResolver: .provided(
-                                                TypeUsage(name: "Logging"),
-                                                by: TypeProvider(
-                                                    decl: loggerProvider,
-                                                    methodName: "provide"
-                                                )
+                        storage: .none
+                    ),
+                    Service(
+                        typeResolver: .explicit(
+                            TypeDeclaration(
+                                name: "NetworkManager",
+                                isReference: true,
+                                memberInjections: [
+                                    MemberInjection(
+                                        name: "logger",
+                                        typeResolver: .provided(
+                                            TypeUsage(name: "Logging"),
+                                            by: TypeProvider(
+                                                decl: loggerProvider,
+                                                methodName: "provide"
                                             )
                                         )
-                                    ]
-                                )
-                            ),
-                            storage: .cached
+                                    )
+                                ]
+                            )
                         ),
-                        Service(
-                            typeResolver: .provided(
-                                TypeUsage(name: "Logging"),
-                                by: TypeProvider(
-                                    decl: loggerProvider,
-                                    methodName: "provide"
-                                )
-                            ),
-                            storage: .none
-                        )
-                    ]
-                )
+                        storage: .cached
+                    )
+                ]
             ]
         )
     }
@@ -106,28 +102,24 @@ class FactoryProvidedTests: XCTestCase {
         let containers = try! ContainerFactory(repo: repo).make()
         let loggerProvider = TypeDeclaration(name: "Logger.Provider", isReference: true)
         XCTAssertEqual(
-            containers,
+            containers.map { $0.services.test_sorted() },
             [
-                Container(
-                    name: "App",
-                    protocolName: "AppConfig",
-                    services: [
-                        Service(
-                            typeResolver: .explicit(loggerProvider),
-                            storage: .cached
+                [
+                    Service(
+                        typeResolver: .provided(
+                            TypeUsage(name: "Logger.AbstractLogger"),
+                            by: TypeProvider(
+                                decl: loggerProvider,
+                                methodName: "provide"
+                            )
                         ),
-                        Service(
-                            typeResolver: .provided(
-                                TypeUsage(name: "Logger.AbstractLogger"),
-                                by: TypeProvider(
-                                    decl: loggerProvider,
-                                    methodName: "provide"
-                                )
-                            ),
-                            storage: .none
-                        )
-                    ]
-                )
+                        storage: .none
+                    ),
+                    Service(
+                        typeResolver: .explicit(loggerProvider),
+                        storage: .cached
+                    )
+                ]
             ]
         )
     }

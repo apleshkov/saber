@@ -49,8 +49,10 @@ class RendererModuleTests: XCTestCase {
             """, moduleName: "Module"
             ).parse(to: factory)
         let repo = try! TypeRepository(parsedData: factory.make())
-        let containers = try! ContainerFactory(repo: repo).make()
-        let data = ContainerDataFactory().make(from: containers[1])
+        let containers = try! ContainerFactory(repo: repo).make().test_sorted()
+        var sessContainer = containers.test_sorted()[1]
+        sessContainer.services = sessContainer.services.test_sorted()
+        let data = ContainerDataFactory().make(from: sessContainer)
         let out = Renderer(data: data).render()
         XCTAssertEqual(
             out,
@@ -70,6 +72,15 @@ class RendererModuleTests: XCTestCase {
                     self.sessionParams = sessionParams
                 }
 
+                public var friendCollection: FriendCollection {
+                    return self.friendList
+                }
+
+                public var friendList: Module.FriendList {
+                    let friendList = self.makeFriendList()
+                    return friendList
+                }
+
                 public var networkManager: Module.NetworkManager {
                     if let cached = self.cached_networkManager { return cached }
                     let networkManager = self.makeNetworkManager()
@@ -83,18 +94,13 @@ class RendererModuleTests: XCTestCase {
                     return storageProvider
                 }
 
-                public var friendList: Module.FriendList {
-                    let friendList = self.makeFriendList()
-                    return friendList
-                }
-
                 public var storage: Storage {
                     let storage = self.makeStorage()
                     return storage
                 }
 
-                public var friendCollection: FriendCollection {
-                    return self.friendList
+                private func makeFriendList() -> Module.FriendList {
+                    return Module.FriendList()
                 }
 
                 private func makeNetworkManager() -> Module.NetworkManager {
@@ -103,10 +109,6 @@ class RendererModuleTests: XCTestCase {
 
                 private func makeStorageProvider() -> Module.StorageProvider {
                     return Module.StorageProvider()
-                }
-
-                private func makeFriendList() -> Module.FriendList {
-                    return Module.FriendList()
                 }
 
                 private func makeStorage() -> Storage {

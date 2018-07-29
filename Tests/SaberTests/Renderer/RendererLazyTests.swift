@@ -35,7 +35,9 @@ class RendererLazyTests: XCTestCase {
             ).parse(to: factory)
         let repo = try! TypeRepository(parsedData: factory.make())
         let containers = try! ContainerFactory(repo: repo).make()
-        let data = ContainerDataFactory().make(from: containers[0])
+        var appContainer = containers[0]
+        appContainer.services = appContainer.services.test_sorted()
+        let data = ContainerDataFactory().make(from: appContainer)
         let out = Renderer(data: data).render()
         XCTAssertEqual(
             out,
@@ -47,23 +49,23 @@ class RendererLazyTests: XCTestCase {
                 public init() {
                 }
 
-                public var foo: Foo {
-                    let foo = self.makeFoo()
-                    return foo
-                }
-
                 public var bar: Bar {
                     let bar = self.makeBar()
                     self.injectTo(bar: bar)
                     return bar
                 }
 
-                private func makeFoo() -> Foo {
-                    return Foo()
+                public var foo: Foo {
+                    let foo = self.makeFoo()
+                    return foo
                 }
 
                 private func makeBar() -> Bar {
                     return Bar(foo: { [unowned self] in return self.foo })
+                }
+
+                private func makeFoo() -> Foo {
+                    return Foo()
                 }
 
                 private func injectTo(bar: Bar) {

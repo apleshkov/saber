@@ -30,7 +30,7 @@ class FactoryLazyTests: XCTestCase {
         let repo = try! TypeRepository(parsedData: parsedFactory.make())
         let containers = try! ContainerFactory(repo: repo).make()
         XCTAssertEqual(
-            containers.first?.services,
+            containers.first?.services.test_sorted(),
             [
                 Service(
                     typeResolver: .explicit(
@@ -81,7 +81,7 @@ class FactoryLazyTests: XCTestCase {
         let repo = try! TypeRepository(parsedData: parsedFactory.make())
         let containers = try! ContainerFactory(repo: repo).make()
         XCTAssertEqual(
-            containers.first?.services,
+            containers.first?.services.test_sorted(),
             [
                 Service(
                     typeResolver: .explicit(
@@ -130,7 +130,7 @@ class FactoryLazyTests: XCTestCase {
         let repo = try! TypeRepository(parsedData: parsedFactory.make())
         let containers = try! ContainerFactory(repo: repo).make()
         XCTAssertEqual(
-            containers.first?.services,
+            containers.first?.services.test_sorted(),
             [
                 Service(
                     typeResolver: .explicit(

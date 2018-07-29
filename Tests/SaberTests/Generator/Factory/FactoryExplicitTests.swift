@@ -92,23 +92,24 @@ class FactoryExplicitTests: XCTestCase {
         let repo = try! TypeRepository(parsedData: parsedFactory.make())
         let containers = try! ContainerFactory(repo: repo).make()
         XCTAssertEqual(
-            containers,
+            containers.map { $0.services.test_sorted() },
             [
-                Container(name: "App", protocolName: "AppConfig")
-                    .add(service: Service(
-                        typeResolver: .explicit(
-                            TypeDeclaration(name: "Foo")
-                                .set(isOptional: true)
-                        ),
-                        storage: .none
-                    ))
-                    .add(service: Service(
+                [
+                    Service(
                         typeResolver: .explicit(
                             TypeDeclaration(name: "Bar")
                                 .set(isOptional: true)
                         ),
                         storage: .none
-                    ))
+                    ),
+                    Service(
+                        typeResolver: .explicit(
+                            TypeDeclaration(name: "Foo")
+                                .set(isOptional: true)
+                        ),
+                        storage: .none
+                    )
+                ]
             ]
         )
     }
@@ -162,31 +163,32 @@ class FactoryExplicitTests: XCTestCase {
             return foo
         }()
         XCTAssertEqual(
-            containers,
+            containers.map { $0.services.test_sorted() },
             [
-                Container(name: "App", protocolName: "AppConfig")
-                    .add(service: Service(
-                        typeResolver: .explicit(foo),
-                        storage: .none
-                    ))
-                    .add(service: Service(
+                [
+                    Service(
                         typeResolver: .explicit(
                             TypeDeclaration(name: "Bar")
                         ),
                         storage: .none
-                    ))
-                    .add(service: Service(
-                        typeResolver: .explicit(
-                            TypeDeclaration(name: "Quux")
-                        ),
-                        storage: .none
-                    ))
-                    .add(service: Service(
+                    ),
+                    Service(
                         typeResolver: .explicit(
                             TypeDeclaration(name: "Baz")
                         ),
                         storage: .none
-                    ))
+                    ),
+                    Service(
+                        typeResolver: .explicit(foo),
+                        storage: .none
+                    ),
+                    Service(
+                        typeResolver: .explicit(
+                            TypeDeclaration(name: "Quux")
+                        ),
+                        storage: .none
+                    )
+                ]
             ]
         )
     }
@@ -214,22 +216,18 @@ class FactoryExplicitTests: XCTestCase {
         let repo = try! TypeRepository(parsedData: parsedFactory.make())
         let containers = try! ContainerFactory(repo: repo).make()
         XCTAssertEqual(
-            containers,
+            containers.map { $0.services.test_sorted() },
             [
-                Container(
-                    name: "App",
-                    protocolName: "AppConfig",
-                    services: [
-                        Service(
-                            typeResolver: .explicit(TypeDeclaration(name: "Clazz.Bar", isReference: true)),
-                            storage: .cached
-                        ),
-                        Service(
-                            typeResolver: .explicit(TypeDeclaration(name: "Clazz.Foo")),
-                            storage: .none
-                        )
-                    ]
-                )
+                [
+                    Service(
+                        typeResolver: .explicit(TypeDeclaration(name: "Clazz.Bar", isReference: true)),
+                        storage: .cached
+                    ),
+                    Service(
+                        typeResolver: .explicit(TypeDeclaration(name: "Clazz.Foo")),
+                        storage: .none
+                    )
+                ]
             ]
         )
     }

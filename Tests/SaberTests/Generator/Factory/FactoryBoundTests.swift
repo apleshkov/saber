@@ -35,43 +35,39 @@ class FactoryBoundTests: XCTestCase {
         let containers = try! ContainerFactory(repo: repo).make()
         let fileLogger = TypeDeclaration(name: "FileLogger", isReference: true)
         XCTAssertEqual(
-            containers,
+            containers.map { $0.services.test_sorted() },
             [
-                Container(
-                    name: "App",
-                    protocolName: "AppConfig",
-                    services: [
-                        Service(
-                            typeResolver: .explicit(
-                                TypeDeclaration(
-                                    name: "NetworkManager",
-                                    isReference: true,
-                                    memberInjections: [
-                                        MemberInjection(
-                                            name: "logger",
-                                            typeResolver: .bound(
-                                                TypeUsage(name: "Logging"),
-                                                to: TypeUsage(name: "FileLogger")
-                                            )
+                [
+                    Service(
+                        typeResolver: .explicit(fileLogger),
+                        storage: .cached
+                    ),
+                    Service(
+                        typeResolver: .bound(
+                            TypeUsage(name: "Logging"),
+                            to: fileLogger
+                        ),
+                        storage: .none
+                    ),
+                    Service(
+                        typeResolver: .explicit(
+                            TypeDeclaration(
+                                name: "NetworkManager",
+                                isReference: true,
+                                memberInjections: [
+                                    MemberInjection(
+                                        name: "logger",
+                                        typeResolver: .bound(
+                                            TypeUsage(name: "Logging"),
+                                            to: TypeUsage(name: "FileLogger")
                                         )
-                                    ]
-                                )
-                            ),
-                            storage: .cached
+                                    )
+                                ]
+                            )
                         ),
-                        Service(
-                            typeResolver: .explicit(fileLogger),
-                            storage: .cached
-                        ),
-                        Service(
-                            typeResolver: .bound(
-                                TypeUsage(name: "Logging"),
-                                to: fileLogger
-                            ),
-                            storage: .none
-                        )
-                    ]
-                )
+                        storage: .cached
+                    )
+                ]
             ]
         )
     }

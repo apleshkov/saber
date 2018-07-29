@@ -123,36 +123,32 @@ class FactoryGenericTests: XCTestCase {
         let fooIntProviderDecl = TypeDeclaration(name: "FooIntProvider", isReference: true)
         let fooFloatProviderDecl = TypeDeclaration(name: "FooFloatProvider", isReference: true)
         XCTAssertEqual(
-            containers,
+            containers.map { $0.services.test_sorted() },
             [
-                Container(
-                    name: "App",
-                    protocolName: "AppConfig",
-                    services: [
-                        Service(
-                            typeResolver: .explicit(fooFloatProviderDecl),
-                            storage: .none
+                [
+                    Service(
+                        typeResolver: .provided(
+                            TypeUsage(name: "Foo", generics: [TypeUsage(name: "Float")]),
+                            by: TypeProvider(decl: fooFloatProviderDecl, methodName: "provide")
                         ),
-                        Service(
-                            typeResolver: .explicit(fooIntProviderDecl),
-                            storage: .none
+                        storage: .none
+                    ),
+                    Service(
+                        typeResolver: .provided(
+                            TypeUsage(name: "Foo", generics: [TypeUsage(name: "Int")]),
+                            by: TypeProvider(decl: fooIntProviderDecl, methodName: "provide")
                         ),
-                        Service(
-                            typeResolver: .provided(
-                                TypeUsage(name: "Foo", generics: [TypeUsage(name: "Int")]),
-                                by: TypeProvider(decl: fooIntProviderDecl, methodName: "provide")
-                            ),
-                            storage: .none
-                        ),
-                        Service(
-                            typeResolver: .provided(
-                                TypeUsage(name: "Foo", generics: [TypeUsage(name: "Float")]),
-                                by: TypeProvider(decl: fooFloatProviderDecl, methodName: "provide")
-                            ),
-                            storage: .none
-                        )
-                    ]
-                )
+                        storage: .none
+                    ),
+                    Service(
+                        typeResolver: .explicit(fooFloatProviderDecl),
+                        storage: .none
+                    ),
+                    Service(
+                        typeResolver: .explicit(fooIntProviderDecl),
+                        storage: .none
+                    )
+                ]
             ]
         )
     }

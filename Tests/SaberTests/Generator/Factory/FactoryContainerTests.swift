@@ -145,7 +145,7 @@ class FactoryContainerTests: XCTestCase {
         let repo = try! TypeRepository(parsedData: parsedFactory.make())
         let containers = try! ContainerFactory(repo: repo).make()
         XCTAssertEqual(
-            containers,
+            containers.test_sorted(),
             [
                 Container(
                     name: "App",

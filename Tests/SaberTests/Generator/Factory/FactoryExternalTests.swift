@@ -111,24 +111,20 @@ class FactoryExternalTests: XCTestCase {
             )
             return listAPI
         }()
+        XCTAssertEqual(containers.map { $0.externals }, [[external]])
         XCTAssertEqual(
-            containers,
+            containers.map { $0.services.test_sorted() },
             [
-                Container(
-                    name: "App",
-                    protocolName: "AppConfig",
-                    externals: [external],
-                    services: [
-                        Service(
-                            typeResolver: .explicit(TypeDeclaration(name: "UserStorage", isReference: true)),
-                            storage: .none
-                        ),
-                        Service(
-                            typeResolver: .explicit(listAPI),
-                            storage: .none
-                        )
-                    ]
-                )
+                [
+                    Service(
+                        typeResolver: .explicit(listAPI),
+                        storage: .none
+                    ),
+                    Service(
+                        typeResolver: .explicit(TypeDeclaration(name: "UserStorage", isReference: true)),
+                        storage: .none
+                    )
+                ]
             ]
         )
     }
