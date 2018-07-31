@@ -27,6 +27,9 @@ class FactoryExternalTests: XCTestCase {
                 private var ignoredPrivateProperty: Ignored
                 private func ignoredPrivateMethod() -> Ignored {}
 
+                fileprivate var ignoredFileprivateProperty: Ignored
+                fileprivate func ignoredFileprivateMethod() -> Ignored {}
+
                 func foo() {} // no return type
 
                 let logger: FileLogger
