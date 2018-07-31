@@ -28,6 +28,7 @@ class PropertyParser {
             return ParsedProperty(
                 name: name,
                 type: parsed.type,
+                accessLevel: structure.swiftAccessLevel,
                 annotations: annotations,
                 isLazy: parsed.isLazy
             )

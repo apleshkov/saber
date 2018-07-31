@@ -241,6 +241,7 @@ extension MethodAnnTest {
 
 extension MethodParserTests {
     static let __allTests = [
+        ("testAccessLevel", testAccessLevel),
         ("testAnnotated", testAnnotated),
         ("testArgs", testArgs),
         ("testFailableInitializer", testFailableInitializer),

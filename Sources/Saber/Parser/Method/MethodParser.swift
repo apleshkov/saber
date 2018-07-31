@@ -39,6 +39,7 @@ class MethodParser {
                 args: args,
                 returnType: returnType,
                 isStatic: isStatic,
+                accessLevel: structure.swiftAccessLevel,
                 annotations: rawData
                     .annotations(for: structure)
                     .compactMap { MethodAnnotationParser.parse($0) },

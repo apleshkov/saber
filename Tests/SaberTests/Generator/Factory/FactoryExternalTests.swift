@@ -20,11 +20,17 @@ class FactoryExternalTests: XCTestCase {
             protocol AppConfig {}
 
             class AppExternals {
+
                 static let ignoredProperty: Ignored // static
                 static func ignoredFunc() -> Ignored {} // static
+
+                private var ignoredPrivateProperty: Ignored
+                private func ignoredPrivateMethod() -> Ignored {}
+
+                func foo() {} // no return type
+
                 let logger: FileLogger
                 func networkManager() -> NetworkManager {}
-                func foo() {} // no return type
             }
             """
             ).parse(to: parsedFactory)

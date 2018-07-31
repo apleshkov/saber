@@ -114,14 +114,39 @@ class MethodParserTests: XCTestCase {
             parse(contents:
                 """
                 class Foo {
-                static func foo() {}
-                class func bar() {}
+                    static func foo() {}
+                    class func bar() {}
                 }
                 """
             ),
             [
                 ParsedMethod(name: "foo", args: [], returnType: nil, isStatic: true),
                 ParsedMethod(name: "bar", args: [], returnType: nil, isStatic: true)
+            ]
+        )
+    }
+
+    func testAccessLevel() {
+        XCTAssertEqual(
+            parse(contents:
+                """
+                class Foo {
+                    func internalFunc1() {}
+                    internal func internalFunc2() {}
+                    private func privateFunc() {}
+                    fileprivate func fileprivateFunc() {}
+                    public func publicFunc() {}
+                    open func openFunc() {}
+                }
+                """
+            ),
+            [
+                ParsedMethod(name: "internalFunc1", args: [], returnType: nil, accessLevel: "internal"),
+                ParsedMethod(name: "internalFunc2", args: [], returnType: nil, accessLevel: "internal"),
+                ParsedMethod(name: "privateFunc", args: [], returnType: nil, accessLevel: "private"),
+                ParsedMethod(name: "fileprivateFunc", args: [], returnType: nil, accessLevel: "fileprivate"),
+                ParsedMethod(name: "publicFunc", args: [], returnType: nil, accessLevel: "public"),
+                ParsedMethod(name: "openFunc", args: [], returnType: nil, accessLevel: "open")
             ]
         )
     }

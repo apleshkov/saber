@@ -17,6 +17,8 @@ struct ParsedMethod: Equatable {
 
     var isStatic: Bool
 
+    var accessLevel: String?
+
     var annotations: [MethodAnnotation]
 
     var isFailableInitializer: Bool
@@ -25,12 +27,14 @@ struct ParsedMethod: Equatable {
          args: [ParsedArgument] = [],
          returnType: ParsedTypeUsage? = nil,
          isStatic: Bool = false,
+         accessLevel: String? = "internal",
          annotations: [MethodAnnotation] = [],
          isFailableInitializer: Bool = false) {
         self.name = name
         self.args = args
         self.returnType = returnType
         self.isStatic = isStatic
+        self.accessLevel = accessLevel
         self.annotations = annotations
         self.isFailableInitializer = isFailableInitializer
     }

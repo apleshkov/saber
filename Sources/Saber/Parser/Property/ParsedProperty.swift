@@ -13,16 +13,20 @@ struct ParsedProperty: Equatable {
 
     var type: ParsedTypeUsage
 
+    var accessLevel: String?
+
     var annotations: [PropertyAnnotation] = []
 
     var isLazy: Bool
 
     init(name: String,
          type: ParsedTypeUsage,
+         accessLevel: String? = "internal",
          annotations: [PropertyAnnotation] = [],
          isLazy: Bool = false) {
         self.name = name
         self.type = type
+        self.accessLevel = accessLevel
         self.annotations = annotations
         self.isLazy = isLazy
     }

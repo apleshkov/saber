@@ -33,4 +33,12 @@ extension Dictionary where Key == String, Value == SourceKitRepresentable {
     var swiftInherited: [[String: SourceKitRepresentable]]? {
         return self[SwiftDocKey.inheritedtypes] as? [[String: SourceKitRepresentable]]
     }
+
+    var swiftAccessLevel: String? {
+        guard let raw = self["key.accessibility"] as? String else {
+            return nil
+        }
+        let prefix = "source.lang.swift.accessibility."
+        return raw.replacingOccurrences(of: prefix, with: "")
+    }
 }

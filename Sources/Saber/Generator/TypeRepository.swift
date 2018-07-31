@@ -359,6 +359,10 @@ extension TypeRepository {
                     throw Throwable.message("Invalid '\(parsedContainer.name)' external: unable to find '\(externalInfo.key)' parsed type")
                 }
                 externalParsedType.properties.forEach {
+                    guard $0.accessLevel?.hasSuffix("private") == false else {
+                        Logger?.debug("Ignoring external '\(usage.genericName)' property '\($0)': private/fileprivate")
+                        return
+                    }
                     let info: Info
                     if let foundInfo = find(by: $0.type.genericName) {
                         info = foundInfo
@@ -378,8 +382,16 @@ extension TypeRepository {
                     Logger?.debug("External '\(usage.genericName)' property: \($0)")
                 }
                 externalParsedType.methods.forEach {
-                    guard $0.isStatic == false, let returnedUsage = $0.returnType else {
-                        Logger?.debug("Ignoring external '\(usage.genericName)' method (static or returns nothing): \($0)")
+                    guard $0.isStatic == false else {
+                        Logger?.debug("Ignoring external '\(usage.genericName)' method '\($0)': static")
+                        return
+                    }
+                    guard let returnedUsage = $0.returnType else {
+                        Logger?.debug("Ignoring external '\(usage.genericName)' method '\($0)': returns nothing")
+                        return
+                    }
+                    guard $0.accessLevel?.hasSuffix("private") == false else {
+                        Logger?.debug("Ignoring external '\(usage.genericName)' method '\($0)': private/fileprivate")
                         return
                     }
                     let info: Info
