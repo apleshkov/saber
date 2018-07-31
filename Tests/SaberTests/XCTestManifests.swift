@@ -181,7 +181,8 @@ extension FactoryExtensionTests {
 
 extension FactoryExternalTests {
     static let __allTests = [
-        ("testSimple", testSimple),
+        ("testIgnoring", testIgnoring),
+        ("testInvalidCyclicDependency", testInvalidCyclicDependency),
         ("testUsage", testUsage),
     ]
 }

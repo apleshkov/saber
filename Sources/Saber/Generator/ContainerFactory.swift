@@ -293,12 +293,18 @@ extension ContainerFactory {
         defer {
             processingDeclarations.remove(key)
         }
+        var decl = TypeDeclaration(name: info.key.name, moduleName: info.key.moduleName)
+        decl.isReference = parsedType.isReference
+        if info.scopeName == nil {
+            Logger?.debug("Don't parse `\(info.key)` as a service: no scope defined")
+            let value: DeclValue = (decl, false)
+            declarationValues[key] = value
+            return value
+        }
         let isInjectOnly = parsedType.annotations.contains(.injectOnly)
         if isInjectOnly {
             Logger?.debug("Injection \(info.key) ignores initializer: \(TypeAnnotation.injectOnly) found")
         }
-        var decl = TypeDeclaration(name: info.key.name, moduleName: info.key.moduleName)
-        decl.isReference = parsedType.isReference
         for property in parsedType.properties {
             guard property.annotations.contains(.inject) else {
                 Logger?.debug(

@@ -10,7 +10,7 @@ import XCTest
 
 class FactoryExternalTests: XCTestCase {
     
-    func testSimple() {
+    func testIgnoring() {
         let parsedFactory = ParsedDataFactory()
         try! FileParser(contents:
             """
@@ -136,5 +136,39 @@ class FactoryExternalTests: XCTestCase {
                 ]
             ]
         )
+    }
+    
+    // Steps to reproduce:
+    // 1. Make an external
+    // 2. Add an initializer with at least one argument
+    //
+    // Behavior to fix:
+    // 1. It tries to make a declaration for an external
+    // 2. Finds an initializer and makes its arguments
+    // 3. Tries to make a declaration again
+    // 4. Got an invalid 'cyclic dependancy' error
+    func testInvalidCyclicDependency() {
+        let parsedFactory = ParsedDataFactory()
+        try! FileParser(contents:
+            """
+            // @saber.container(App)
+            // @saber.scope(Singleton)
+            // @saber.externals(AppExternals)
+            protocol AppConfig {}
+
+            typealias UserId = String
+
+            class AppExternals {
+
+                let userId: UserId
+
+                init(userId: UserId) {
+                    self.userId = userId
+                }
+            }
+            """
+            ).parse(to: parsedFactory)
+        let repo = try! TypeRepository(parsedData: parsedFactory.make())
+        XCTAssertNoThrow(try ContainerFactory(repo: repo).make())
     }
 }
