@@ -70,7 +70,7 @@ Generate containers from sources
 	Could be 'info' (by default) or 'debug' (optional)
 ```
 
-### xcodeproj (only on macOS)
+### xcodeproj (on macOS only)
 
 The tool parses Xcode project at `--path`, traverses enumerated `--targets` and generates container classes to `--out`.
 
