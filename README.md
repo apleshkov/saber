@@ -1,8 +1,12 @@
 # Saber
 
-Dependency injection (DI) & Inversion of Control (IoC) _command line_ tool for Swift based on __code generation__.
+[Dependency Injection](https://en.wikipedia.org/wiki/Dependency_injection) (DI) / [Inversion of Control](https://en.wikipedia.org/wiki/Inversion_of_control) (IoC) _command line_ tool for Swift based on __code generation__.
 
-_Saber_ requires __no__ frameworks, just parses sources (via [SourceKitten](https://github.com/jpsim/SourceKitten)), finds [annotations](https://github.com/apleshkov/saber/wiki/Annotations) and generates [DI-containers](https://github.com/apleshkov/saber/wiki/Container).
+_Saber_ requires __no__ frameworks, just parses sources (via [SourceKitten](https://github.com/jpsim/SourceKitten)), finds [annotations](https://github.com/apleshkov/saber/wiki/Annotations) and generates [containers](https://github.com/apleshkov/saber/wiki/Container).
+
+
+
+_NOTE_: _Saber_ is currently in active development, so it's more than welcome to test it and [file](https://github.com/apleshkov/saber/issues) a bug/feature request/...
 
 ## Documentation
 
@@ -12,6 +16,12 @@ Please, see [wiki](https://github.com/apleshkov/saber/wiki).
 
 Building saber on macOS requires Xcode 9.3+ / Swift 4.1 and Swift Package Manager.
 
+## Development
+
+__Xcode__: clone, run `make xcodeproj` and then open a generated `Saber.xcodeproj`. Use `make docker_linux_test` to test on Linux inside a [docker](https://www.docker.com) container.
+
+__Linux__: `make clean`, `make build` and `make test`
+
 ### Homebrew
 
 _TODO_
@@ -19,6 +29,8 @@ _TODO_
 ### Make
 
 Clone & run `make install` in the root directory of this project.
+
+Run `make uninstall` to uninstall.
 
 ## Usage
 
@@ -58,7 +70,7 @@ Generate containers from sources
 	Could be 'info' (by default) or 'debug' (optional)
 ```
 
-### xcodeproj
+### xcodeproj (only on macOS)
 
 The tool parses Xcode project at `--path`, traverses enumerated `--targets` and generates container classes to `--out`.
 
