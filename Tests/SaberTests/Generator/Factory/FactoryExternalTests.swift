@@ -30,7 +30,7 @@ class FactoryExternalTests: XCTestCase {
                 fileprivate var ignoredFileprivateProperty: Ignored
                 fileprivate func ignoredFileprivateMethod() -> Ignored {}
 
-                func foo() {} // no return type
+                func ignoredVoidFunction() {} // no return type
 
                 let logger: FileLogger
                 func networkManager() -> NetworkManager {}
@@ -39,21 +39,15 @@ class FactoryExternalTests: XCTestCase {
             ).parse(to: parsedFactory)
         let repo = try! TypeRepository(parsedData: parsedFactory.make())
         let containers = try! ContainerFactory(repo: repo).make()
-        let external = ContainerExternal(
-            type: TypeUsage(name: "AppExternals"),
-            kinds: [
-                .method(name: "networkManager", args: []),
-                .property(name: "logger")
-            ]
-        )
         XCTAssertEqual(
-            containers,
+            containers.map { $0.externals.map { $0.kinds.test_sorted() } },
             [
-                Container(
-                    name: "App",
-                    protocolName: "AppConfig",
-                    externals: [external]
-                )
+                [
+                    [
+                        .property(name: "logger"),
+                        .method(name: "networkManager", args: [])
+                    ]
+                ]
             ]
         )
     }

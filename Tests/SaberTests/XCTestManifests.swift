@@ -1,5 +1,13 @@
 import XCTest
 
+extension AnnParserTests {
+    static let __allTests = [
+        ("testBasic", testBasic),
+        ("testMultilineComments", testMultilineComments),
+        ("testNewlines", testNewlines),
+    ]
+}
+
 extension BasicContainerTests {
     static let __allTests = [
         ("testImports", testImports),
@@ -387,6 +395,7 @@ extension TypealiasParserTests {
 #if !os(macOS)
 public func __allTests() -> [XCTestCaseEntry] {
     return [
+        testCase(AnnParserTests.__allTests),
         testCase(BasicContainerTests.__allTests),
         testCase(BoundTypeResolverTests.__allTests),
         testCase(ContainerAnnTests.__allTests),
