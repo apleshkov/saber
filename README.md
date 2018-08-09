@@ -108,8 +108,6 @@ indentation:
 
 ```
 
-Example configuration: [config.example.yml](config.example.yml)
-
 ## License
 
 MIT
