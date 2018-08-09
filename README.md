@@ -4,13 +4,9 @@
 
 _Saber_ requires __no__ frameworks, just parses sources (via [SourceKitten](https://github.com/jpsim/SourceKitten)), finds [annotations](https://github.com/apleshkov/saber/wiki/Annotations) and generates [containers](https://github.com/apleshkov/saber/wiki/Container).
 
-
-
-_NOTE_: _Saber_ is currently in active development, so it's more than welcome to test it and [file](https://github.com/apleshkov/saber/issues) a bug/feature request/...
-
 ## Documentation
 
-Please, see [wiki](https://github.com/apleshkov/saber/wiki).
+Please, see [wiki](https://github.com/apleshkov/saber/wiki) and [examples](https://github.com/apleshkov/saber-examples).
 
 ## Installation
 
