@@ -81,6 +81,6 @@ private func parse(contents: String) -> [ParsedType] {
     let structure = try! Structure(file: File(contents: contents))
     let rawData = RawData(contents: contents)
     return structure.dictionary.swiftSubstructures!.compactMap {
-        return TypeParser.parse($0, rawData: rawData)
+        return TypeParser.parse($0, rawData: rawData, config: SaberConfiguration.test)
     }
 }

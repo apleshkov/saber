@@ -6,6 +6,8 @@ public struct SaberConfiguration: Equatable {
     public var accessLevel = "internal"
     
     public var indent = "    "
+
+    public var lazyTypealias: String?
     
     public init() {}
 }
@@ -20,6 +22,7 @@ extension SaberConfiguration: Decodable {
     private enum CodingKeys: String, CodingKey {
         case accessLevel
         case indentation
+        case lazyTypealias
     }
 
     private enum IndentationKeys: String, CodingKey {
@@ -41,6 +44,7 @@ extension SaberConfiguration: Decodable {
             let size = try indentation.decode(Int.self, forKey: .size)
             self.indent = (0..<size).map { _ in char }.joined()
         }
+        self.lazyTypealias = try? values.decode(String.self, forKey: .lazyTypealias)
     }
 
     private enum IdentationType: String {

@@ -259,6 +259,6 @@ private func parse(contents: String) -> [ParsedMethod] {
     let rawData = RawData(contents: contents)
     let structure = try! Structure(file: File(contents: contents))
     let substructure = structure.dictionary.swiftSubstructures![0]
-    let type = TypeParser.parse(substructure, rawData: rawData)
+    let type = TypeParser.parse(substructure, rawData: rawData, config: SaberConfiguration.test)
     return type!.methods
 }

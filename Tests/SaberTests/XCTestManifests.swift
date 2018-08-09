@@ -219,6 +219,14 @@ extension FactoryLazyTests {
     ]
 }
 
+extension FactoryLazyTypealiasTests {
+    static let __allTests = [
+        ("testInitializer", testInitializer),
+        ("testMethodInjections", testMethodInjections),
+        ("testPropertyInjections", testPropertyInjections),
+    ]
+}
+
 extension FactoryProvidedTests {
     static let __allTests = [
         ("testBasic", testBasic),
@@ -417,6 +425,7 @@ public func __allTests() -> [XCTestCaseEntry] {
         testCase(FactoryGenericTests.__allTests),
         testCase(FactoryInjectionHandlerTests.__allTests),
         testCase(FactoryLazyTests.__allTests),
+        testCase(FactoryLazyTypealiasTests.__allTests),
         testCase(FactoryProvidedTests.__allTests),
         testCase(FileParserTests.__allTests),
         testCase(LambdaParserTests.__allTests),

@@ -13,6 +13,10 @@ extension FileParser {
     
     convenience init(contents: String, moduleName: String? = nil) throws {
         let file = File(contents: contents)
-        try self.init(file: file, moduleName: moduleName)
+        try self.init(
+            file: file,
+            config: SaberConfiguration.test,
+            moduleName: moduleName
+        )
     }
 }

@@ -10,7 +10,9 @@ import SourceKittenFramework
 
 class MethodParser {
     
-    static func parse(_ structure: [String : SourceKitRepresentable], rawData: RawData) -> ParsedMethod? {
+    static func parse(_ structure: [String : SourceKitRepresentable],
+                      rawData: RawData,
+                      config: SaberConfiguration) -> ParsedMethod? {
         guard let kind = structure.swiftDeclKind,
             let rawName = structure.swiftName else {
             return nil
@@ -23,8 +25,8 @@ class MethodParser {
             } else {
                 name = rawName
             }
-            let args = parseArgs(structure)
-            let returnType = parseType(structure)?.type
+            let args = parseArgs(structure, config: config)
+            let returnType = parseType(structure, config: config)?.type
             let isStatic = (kind == .functionMethodStatic || kind == .functionMethodClass)
             var isFailableInitializer = false
             if name == "init" {
@@ -50,7 +52,8 @@ class MethodParser {
         }
     }
     
-    static func parseArgs(_ structure: [String : SourceKitRepresentable]) -> [ParsedArgument] {
+    static func parseArgs(_ structure: [String : SourceKitRepresentable],
+                          config: SaberConfiguration) -> [ParsedArgument] {
         return (structure.swiftSubstructures ?? []).compactMap { (structure) in
             guard let kind = structure.swiftDeclKind else {
                 return nil
@@ -63,7 +66,7 @@ class MethodParser {
                 } else {
                     name = nil
                 }
-                guard let parsed = parseType(structure) else {
+                guard let parsed = parseType(structure, config: config) else {
                     return nil
                 }
                 return ParsedArgument(name: name, type: parsed.type, isLazy: parsed.isLazy)
@@ -73,12 +76,16 @@ class MethodParser {
         }
     }
     
-    static func parseType(_ structure: [String : SourceKitRepresentable]) -> (type: ParsedTypeUsage, isLazy: Bool)? {
+    static func parseType(_ structure: [String : SourceKitRepresentable],
+                          config: SaberConfiguration) -> (type: ParsedTypeUsage, isLazy: Bool)? {
         guard let rawType = structure.swiftTypeName else {
             return nil
         }
         if let type = TypeUsageParser.parse(rawType) {
-            return (type, false)
+            guard type.name == config.lazyTypealias, let genericType = type.generics.first else {
+                return (type, false)
+            }
+            return (genericType, true)
         }
         if let lambda = LambdaParser.parse(rawType), let returnType = lambda.returnType {
             return (returnType, true)
