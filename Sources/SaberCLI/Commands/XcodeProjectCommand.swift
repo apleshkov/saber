@@ -55,7 +55,7 @@ struct XcodeProjectCommand: CommandProtocol {
                         return { (outPath) in
                             let outDir = URL(fileURLWithPath: outPath).saber_relative(to: baseURL)
                             return { (rawConfig) in
-                                let config: SaberConfiguration? = try? ConfigDecoder(raw: rawConfig).decode()
+                                let config: SaberConfiguration? = try? ConfigDecoder(raw: rawConfig).decode(baseURL: baseURL)
                                 return { (logLevel) in
                                     return self.init(
                                         url: url,

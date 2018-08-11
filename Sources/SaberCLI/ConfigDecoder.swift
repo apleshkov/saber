@@ -20,10 +20,10 @@ class ConfigDecoder {
         self.decoder = YAMLDecoder()
     }
 
-    func decode<T>() throws -> T where T: Decodable {
+    func decode<T>(baseURL: URL?) throws -> T where T: Decodable {
         let contents: String
         if raw.hasSuffix(".yml") {
-            let url = URL(fileURLWithPath: raw)
+            let url = URL(fileURLWithPath: raw).saber_relative(to: baseURL)
             contents = try String(contentsOf: url, encoding: .utf8)
         } else {
             contents = raw
