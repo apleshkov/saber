@@ -156,6 +156,6 @@ private func parse(contents: String) -> [ParsedExtension] {
     let structure = try! Structure(file: File(contents: contents))
     let rawData = RawData(contents: contents)
     return structure.dictionary.swiftSubstructures!.compactMap {
-        return ExtensionParser.parse($0, rawData: rawData)
+        return ExtensionParser.parse($0, rawData: rawData, config: SaberConfiguration.test)
     }
 }

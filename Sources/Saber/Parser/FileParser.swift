@@ -16,7 +16,11 @@ public class FileParser {
 
     private let moduleName: String?
 
-    public init(file: File, moduleName: String? = nil) throws {
+    private let config: SaberConfiguration
+
+    public init(file: File,
+                config: SaberConfiguration,
+                moduleName: String? = nil) throws {
         if let path = file.path {
             Logger?.info("Parsing '\(path)'...")
         } else {
@@ -25,13 +29,16 @@ public class FileParser {
         self.structure = try Structure(file: file).dictionary
         self.rawData = RawData(contents: file.contents)
         self.moduleName = moduleName
+        self.config = config
     }
     
-    public convenience init(path: String, moduleName: String? = nil) throws {
+    public convenience init(path: String,
+                            config: SaberConfiguration,
+                            moduleName: String? = nil) throws {
         guard let file = File(path: path) else {
             throw Throwable.message("Invalid file at '\(path)'")
         }
-        try self.init(file: file, moduleName: moduleName)
+        try self.init(file: file, config: config, moduleName: moduleName)
     }
 
     public func parse(to data: ParsedDataFactory) throws {
@@ -44,9 +51,9 @@ public class FileParser {
             Logger?.info("Container '\(container.fullName(modular: true))' parsed")
             Logger?.log(.debug, loggable: container)
             try data.register(container)
-        } else if let type = TypeParser.parse(structure, rawData: rawData) {
+        } else if let type = TypeParser.parse(structure, rawData: rawData, config: config) {
             process(type, parent: nil, data: data)
-        } else if let ext = ExtensionParser.parse(structure, rawData: rawData) {
+        } else if let ext = ExtensionParser.parse(structure, rawData: rawData, config: config) {
             process(ext, parent: nil, data: data)
         } else if let alias = TypealiasParser.parse(structure, rawData: rawData) {
             process(alias, parent: nil, data: data)

@@ -11,7 +11,8 @@ import SourceKittenFramework
 class PropertyParser {
 
     static func parse(_ structure: [String : SourceKitRepresentable],
-                      rawData: RawData) -> ParsedProperty? {
+                      rawData: RawData,
+                      config: SaberConfiguration) -> ParsedProperty? {
         guard let kind = structure.swiftDeclKind,
             let name = structure.swiftName,
             let typeName = structure.swiftTypeName else {
@@ -19,7 +20,7 @@ class PropertyParser {
         }
         switch kind {
         case .varInstance:
-            guard let parsed = parseType(typeName) else {
+            guard let parsed = parseType(typeName, config: config) else {
                 return nil
             }
             let annotations = rawData
@@ -37,9 +38,13 @@ class PropertyParser {
         }
     }
     
-    private static func parseType(_ rawString: String) -> (type: ParsedTypeUsage, isLazy: Bool)? {
+    private static func parseType(_ rawString: String,
+                                  config: SaberConfiguration) -> (type: ParsedTypeUsage, isLazy: Bool)? {
         if let type = TypeUsageParser.parse(rawString) {
-            return (type, false)
+            guard type.name == config.lazyTypealias, let genericType = type.generics.first else {
+                return (type, false)
+            }
+            return (genericType, true)
         }
         if let lambda = LambdaParser.parse(rawString), let returnType = lambda.returnType {
             return (returnType, true)

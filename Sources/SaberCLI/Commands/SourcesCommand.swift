@@ -27,7 +27,7 @@ struct SourcesCommand: CommandProtocol {
 
         let outDir: URL
 
-        let rawConfig: String
+        let config: SaberConfiguration?
         
         let logLevel: String
 
@@ -45,11 +45,12 @@ struct SourcesCommand: CommandProtocol {
                     return { (outPath) in
                         let outDir = URL(fileURLWithPath: outPath).saber_relative(to: baseURL)
                         return { (rawConfig) in
+                            let config: SaberConfiguration? = try? ConfigDecoder(raw: rawConfig).decode()
                             return { (logLevel) in
                                 self.init(
                                     inputDir: inputDir,
                                     outDir: outDir,
-                                    rawConfig: rawConfig,
+                                    config: config,
                                     logLevel: logLevel
                                 )
                             }
@@ -71,6 +72,7 @@ struct SourcesCommand: CommandProtocol {
     func run(_ options: Options) -> Result<(), Throwable> {
         do {
             Logger = ConsoleLogger(level: try LogLevel.make(from: options.logLevel))
+            let config = options.config ?? defaultConfig
             let factory = ParsedDataFactory()
             try DirectoryTraverser.traverse(options.inputDir.path) { (path) in
                 if path.hasSuffix(FileRenderer.fileSuffix) {
@@ -81,7 +83,7 @@ struct SourcesCommand: CommandProtocol {
                     Logger?.info("Ignoring '\(path)': not a swift file")
                     return
                 }
-                let parser = try FileParser(path: path)
+                let parser = try FileParser(path: path, config: config)
                 try parser.parse(to: factory)
             }
             try FileRenderer.render(
@@ -89,8 +91,7 @@ struct SourcesCommand: CommandProtocol {
                     version: saberVersion,
                     parsedDataFactory: factory,
                     outDir: options.outDir,
-                    rawConfig: options.rawConfig,
-                    defaultConfig: defaultConfig
+                    config: config
                 )
             )
             return .success(())

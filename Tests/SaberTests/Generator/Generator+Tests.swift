@@ -8,12 +8,6 @@
 import Foundation
 @testable import Saber
 
-private let testConfig: SaberConfiguration = {
-    var config = SaberConfiguration.default
-    config.accessLevel = "public"
-    return config
-}()
-
 extension Container {
 
     init(name: String, dependencies: [TypeUsage] = [], isThreadSafe: Bool = false, imports: [String] = []) {
@@ -24,14 +18,14 @@ extension Container {
 extension ContainerDataFactory {
     
     convenience init() {
-        self.init(config: testConfig)
+        self.init(config: SaberConfiguration.test)
     }
 }
 
 extension Renderer {
     
     convenience init(data: ContainerData) {
-        self.init(data: data, config: testConfig)
+        self.init(data: data, config: SaberConfiguration.test)
     }
 }
 

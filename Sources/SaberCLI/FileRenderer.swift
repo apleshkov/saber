@@ -43,8 +43,7 @@ extension FileRenderer {
         var version: String
         var parsedDataFactory: ParsedDataFactory
         var outDir: URL
-        var rawConfig: String
-        var defaultConfig: SaberConfiguration
+        var config: SaberConfiguration
     }
 
     static func render(params: FileRenderer.Params) throws {
@@ -52,13 +51,7 @@ extension FileRenderer {
         guard containers.count > 0 else {
             throw Throwable.message("No containers found")
         }
-        let config: SaberConfiguration
-        if params.rawConfig.count > 0 {
-            config = try ConfigDecoder(raw: params.rawConfig).decode()
-        } else {
-            config = params.defaultConfig
-        }
-        try FileRenderer(outDir: params.outDir, config: config, version: params.version)
+        try FileRenderer(outDir: params.outDir, config: params.config, version: params.version)
             .render(containers: containers)
     }
 }

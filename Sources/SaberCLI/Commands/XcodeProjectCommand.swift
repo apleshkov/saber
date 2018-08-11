@@ -31,7 +31,7 @@ struct XcodeProjectCommand: CommandProtocol {
         
         let outDir: URL
         
-        let rawConfig: String
+        let config: SaberConfiguration?
         
         let logLevel: String
         
@@ -55,12 +55,13 @@ struct XcodeProjectCommand: CommandProtocol {
                         return { (outPath) in
                             let outDir = URL(fileURLWithPath: outPath).saber_relative(to: baseURL)
                             return { (rawConfig) in
+                                let config: SaberConfiguration? = try? ConfigDecoder(raw: rawConfig).decode()
                                 return { (logLevel) in
                                     return self.init(
                                         url: url,
                                         targetNames: targetNames,
                                         outDir: outDir,
-                                        rawConfig: rawConfig,
+                                        config: config,
                                         logLevel: logLevel
                                     )
                                 }
@@ -87,6 +88,7 @@ struct XcodeProjectCommand: CommandProtocol {
             guard options.targetNames.count > 0 else {
                 throw Throwable.message("No targets found")
             }
+            let config = options.config ?? defaultConfig
             Logger?.info("Xcode Project: \(options.url.path)...")
             let project = try SaberXProject(path: options.url.path, targetNames: options.targetNames)
             let factory = ParsedDataFactory()
@@ -101,7 +103,7 @@ struct XcodeProjectCommand: CommandProtocol {
                         Logger?.info("Ignoring '\(path)': not a swift file")
                         return
                     }
-                    let parser = try FileParser(path: path, moduleName: target.name)
+                    let parser = try FileParser(path: path, config: config, moduleName: target.name)
                     try parser.parse(to: factory)
                 }
             }
@@ -110,8 +112,7 @@ struct XcodeProjectCommand: CommandProtocol {
                     version: saberVersion,
                     parsedDataFactory: factory,
                     outDir: options.outDir,
-                    rawConfig: options.rawConfig,
-                    defaultConfig: defaultConfig
+                    config: config
                 )
             )
             return .success(())
