@@ -98,14 +98,15 @@ Generate containers from Xcode project
 ### Configuration
 
 Provide it via `--config` as text or file:
-```
+```yaml
 # Access level for generated classes (internal by default)
 accessLevel: internal # public, open, ...
 # Identation for generated files (4 spaces by default)
 indentation:
     type: space # or tab
     size: 4
-
+# Lazy typealias (see wiki; none by default)
+lazyTypealias: LazyInjection
 ```
 
 ## License
