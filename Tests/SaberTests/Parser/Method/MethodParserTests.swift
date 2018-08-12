@@ -78,6 +78,30 @@ class MethodParserTests: XCTestCase {
             ]
         )
     }
+    
+    func testDefaultArgs() {
+        XCTAssertEqual(
+            parse(contents:
+                """
+                struct Foo {
+                func bar(_ x: Int = 0, baz: Baz? = nil) {}
+                }
+                """
+                ).map { $0.args },
+            [
+                [
+                    ParsedArgument(
+                        name: nil,
+                        type: ParsedTypeUsage(name: "Int")
+                    ),
+                    ParsedArgument(
+                        name: "baz",
+                        type: ParsedTypeUsage(name: "Baz", isOptional: true)
+                    )
+                ]
+            ]
+        )
+    }
 
     func testTuple() {
         XCTAssertEqual(
@@ -231,6 +255,37 @@ class MethodParserTests: XCTestCase {
                     init(_ x: () -> X) {}
                     // @saber.inject
                     func set(bar: @escaping () -> Bar, baz: (() -> Baz)!) {}
+                }
+                """
+            ),
+            [
+                ParsedMethod(
+                    name: "init",
+                    args: [
+                        ParsedArgument(name: nil, type: ParsedTypeUsage(name: "X"), isLazy: true)
+                    ],
+                    annotations: []
+                ),
+                ParsedMethod(
+                    name: "set",
+                    args: [
+                        ParsedArgument(name: "bar", type: ParsedTypeUsage(name: "Bar"), isLazy: true),
+                        ParsedArgument(name: "baz", type: ParsedTypeUsage(name: "Baz"), isLazy: true)
+                    ],
+                    annotations: [.inject]
+                )
+            ]
+        )
+    }
+    
+    func testLazyTypealias() {
+        XCTAssertEqual(
+            parse(contents:
+                """
+                class Foo {
+                    init(_ x: LazyInjection<X>) {}
+                    // @saber.inject
+                    func set(bar: LazyInjection<Bar>, baz: LazyInjection<Baz>!) {}
                 }
                 """
             ),
