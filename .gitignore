@@ -2,6 +2,6 @@
 DerivedData
 /.build
 /Packages
-*.xcodeproj
+/*.xcodeproj
 xcuserdata
 *.swp
