@@ -6,8 +6,8 @@
         "repositoryURL": "https://github.com/tadija/AEXML.git",
         "state": {
           "branch": null,
-          "revision": "6eea665515d079c338690147082a8084a36484b0",
-          "version": "4.3.0"
+          "revision": "54bb8ea6fb693dd3f92a89e5fcc19e199fdeedd0",
+          "version": "4.3.3"
         }
       },
       {
@@ -15,8 +15,8 @@
         "repositoryURL": "https://github.com/Carthage/Commandant.git",
         "state": {
           "branch": null,
-          "revision": "066bf9a79c37cf24fe4746ab7a1793b0359d1fe5",
-          "version": "0.14.0"
+          "revision": "07cad52573bad19d95844035bf0b25acddf6b0f6",
+          "version": "0.15.0"
         }
       },
       {
@@ -24,8 +24,8 @@
         "repositoryURL": "https://github.com/Quick/Nimble.git",
         "state": {
           "branch": null,
-          "revision": "8023e3980d91b470ad073d6da843b73f2eeb1844",
-          "version": "7.1.2"
+          "revision": "cd6dfb86f496fcd96ce0bc6da962cd936bf41903",
+          "version": "7.3.1"
         }
       },
       {
@@ -33,8 +33,8 @@
         "repositoryURL": "https://github.com/Quick/Quick.git",
         "state": {
           "branch": null,
-          "revision": "3e3023569c8d4c4a0d000f58db765df53041117f",
-          "version": "1.3.0"
+          "revision": "5fbf13871d185526993130c3a1fad0b70bfe37ce",
+          "version": "1.3.2"
         }
       },
       {
@@ -42,8 +42,8 @@
         "repositoryURL": "https://github.com/antitypical/Result.git",
         "state": {
           "branch": null,
-          "revision": "7477584259bfce2560a19e06ad9f71db441fff11",
-          "version": "3.2.4"
+          "revision": "8fc088dcf72802801efeecba76ea8fb041fb773d",
+          "version": "4.0.0"
         }
       },
       {
@@ -51,8 +51,8 @@
         "repositoryURL": "https://github.com/jpsim/SourceKitten.git",
         "state": {
           "branch": null,
-          "revision": "e6efd3d8702fe6668ac43aa882d56f82430c6caf",
-          "version": "0.21.1"
+          "revision": "4be914be6fa49cd30b1e7ef5d32d06c037d8f469",
+          "version": "0.21.2"
         }
       },
       {
@@ -60,8 +60,8 @@
         "repositoryURL": "https://github.com/apple/swift-package-manager",
         "state": {
           "branch": null,
-          "revision": "6983434787dec4e543e9d398a0a9acf63ccd4da1",
-          "version": "0.2.1"
+          "revision": "235aacc514cb81a6881364b0fedcb3dd083228f3",
+          "version": "0.3.0"
         }
       },
       {
@@ -69,8 +69,8 @@
         "repositoryURL": "https://github.com/drmohundro/SWXMLHash.git",
         "state": {
           "branch": null,
-          "revision": "2211b35c2e0e8b08493f86ba52b26e530cabb751",
-          "version": "4.7.0"
+          "revision": "b130217d81833cecd7ddf78b76d60200f1070d98",
+          "version": "4.7.4"
         }
       },
       {
@@ -78,8 +78,8 @@
         "repositoryURL": "https://github.com/xcode-project-manager/xcodeproj.git",
         "state": {
           "branch": null,
-          "revision": "5451a896ee83f440d7c0997f64e313cada8d71f3",
-          "version": "5.0.0-rc1"
+          "revision": "929fa456244d6c44d702ba711571c4b2972cf674",
+          "version": "5.2.0"
         }
       },
       {
@@ -87,8 +87,8 @@
         "repositoryURL": "https://github.com/jpsim/Yams.git",
         "state": {
           "branch": null,
-          "revision": "618582e09699b577fa183bab7d88e3ee7d9a1d19",
-          "version": "1.0.0"
+          "revision": "26ab35f50ea891e8edefcc9d975db2f6b67e1d68",
+          "version": "1.0.1"
         }
       }
     ]

@@ -1,4 +1,4 @@
-// swift-tools-version:4.0
+// swift-tools-version:4.2
 
 import PackageDescription
 
@@ -23,11 +23,20 @@ var package = Package(
             name: "SaberCLI",
             dependencies: ["Saber", "Commandant"]
         ),
+        .target(
+            name: "SaberLauncher",
+            dependencies: ["Saber", "SaberCLI", "Commandant"]
+        ),
         .testTarget(
             name: "SaberTests",
             dependencies: ["Saber"]
+        ),
+        .testTarget(
+            name: "SaberCLITests",
+            dependencies: ["SaberCLI"]
         )
-    ]
+    ],
+    swiftLanguageVersions: [.v4, .v4_2]
 )
 
 #if os(OSX)

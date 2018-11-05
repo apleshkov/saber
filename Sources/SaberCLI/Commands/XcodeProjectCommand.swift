@@ -12,18 +12,19 @@ import Saber
 import Commandant
 import Result
 
-struct XcodeProjectCommand: CommandProtocol {
+public struct XcodeProjectCommand: CommandProtocol {
     
-    let verb = "xcodeproj"
-    let function = "Generate containers from Xcode project"
+    public let verb = "xcodeproj"
+    
+    public let function = "Generate containers from Xcode project"
     
     private let defaultConfig: SaberConfiguration
     
-    init(config: SaberConfiguration) {
+    public init(config: SaberConfiguration) {
         self.defaultConfig = config
     }
     
-    struct Options: OptionsProtocol {
+    public struct Options: OptionsProtocol {
         
         let url: URL
         
@@ -71,7 +72,7 @@ struct XcodeProjectCommand: CommandProtocol {
                 }
         }
         
-        static func evaluate(_ m: CommandMode) -> Result<Options, CommandantError<Throwable>> {
+        public static func evaluate(_ m: CommandMode) -> Result<Options, CommandantError<Throwable>> {
             return create
                 <*> m <| Option(key: "workDir", defaultValue: "", usage: "Working directory (optional)")
                 <*> m <| Option(key: "path", defaultValue: "", usage: "Path to *.xcodeproj (is relative to --workDir if any)")
@@ -82,9 +83,9 @@ struct XcodeProjectCommand: CommandProtocol {
         }
     }
     
-    func run(_ options: Options) -> Result<(), Throwable> {
+    public func run(_ options: Options) -> Result<(), Throwable> {
         do {
-            Logger = ConsoleLogger(level: try LogLevel.make(from: options.logLevel))
+            Logger?.currentLevel = try LogLevel.make(from: options.logLevel)
             guard options.targetNames.count > 0 else {
                 throw Throwable.message("No targets found")
             }

@@ -10,12 +10,15 @@ import Saber
 import Commandant
 import Result
 
-struct VersionCommand: CommandProtocol {
+public struct VersionCommand: CommandProtocol {
     
-    let verb = "version"
-    let function = "Print current version"
+    public let verb = "version"
+    public let function = "Print current version"
     
-    func run(_ options: NoOptions<Throwable>) -> Result<(), Throwable> {
+    public init() {        
+    }
+    
+    public func run(_ options: NoOptions<Throwable>) -> Result<(), Throwable> {
         print(saberVersion)
         return .success(())
     }

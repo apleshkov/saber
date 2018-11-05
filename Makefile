@@ -18,7 +18,7 @@ build:
 
 install: clean build
 	install -d "$(INST_FOLDER)"
-	install "$(BIN_PATH)/SaberCLI" "$(INST_FOLDER)/saber"
+	install "$(BIN_PATH)/SaberLauncher" "$(INST_FOLDER)/saber"
 
 uninstall:
 	rm -rf "$(INST_FOLDER)/saber"
@@ -28,7 +28,7 @@ test:
 
 docker_linux_test:
 	swift test --generate-linuxmain
-	docker run --rm -i -t --volume "$(shell pwd):/package" --workdir "/package" swift:4.1 /bin/bash -c "make test"
+	docker run --rm -i -t --volume "$(shell pwd):/package" --workdir "/package" swift:4.2 /bin/bash -c "make test"
 
 xcodeproj:
 	swift package generate-xcodeproj --xcconfig-overrides Saber.xcconfig

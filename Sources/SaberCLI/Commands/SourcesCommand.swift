@@ -10,18 +10,19 @@ import Saber
 import Commandant
 import Result
 
-struct SourcesCommand: CommandProtocol {
+public struct SourcesCommand: CommandProtocol {
 
-    let verb = "sources"
-    let function = "Generate containers from sources"
+    public let verb = "sources"
+    
+    public let function = "Generate containers from sources"
 
     private let defaultConfig: SaberConfiguration
 
-    init(config: SaberConfiguration) {
+    public init(config: SaberConfiguration) {
         self.defaultConfig = config
     }
 
-    struct Options: OptionsProtocol {
+    public struct Options: OptionsProtocol {
 
         let inputDir: URL
 
@@ -59,7 +60,7 @@ struct SourcesCommand: CommandProtocol {
                 }
         }
 
-        static func evaluate(_ m: CommandMode) -> Result<Options, CommandantError<Throwable>> {
+        public static func evaluate(_ m: CommandMode) -> Result<Options, CommandantError<Throwable>> {
             return create
                 <*> m <| Option(key: "workDir", defaultValue: "", usage: "Working directory (optional)")
                 <*> m <| Option(key: "from", defaultValue: "", usage: "Directory with sources (is relative to --workDir if any)")
@@ -69,9 +70,9 @@ struct SourcesCommand: CommandProtocol {
         }
     }
 
-    func run(_ options: Options) -> Result<(), Throwable> {
+    public func run(_ options: Options) -> Result<(), Throwable> {
         do {
-            Logger = ConsoleLogger(level: try LogLevel.make(from: options.logLevel))
+            Logger?.currentLevel = try LogLevel.make(from: options.logLevel)
             let config = options.config ?? defaultConfig
             let factory = ParsedDataFactory()
             try DirectoryTraverser.traverse(options.inputDir.path) { (path) in

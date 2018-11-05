@@ -337,6 +337,7 @@ extension SaberTests {
         ("testConfigAccessLevel", testConfigAccessLevel),
         ("testConfigSpaceIdentation", testConfigSpaceIdentation),
         ("testConfigTabIdentation", testConfigTabIdentation),
+        ("testLock", testLock),
     ]
 }
 

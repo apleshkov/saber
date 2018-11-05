@@ -8,6 +8,7 @@
 import Foundation
 import Commandant
 import Saber
+import SaberCLI
 
 let config = SaberConfiguration.default
 

@@ -53,6 +53,11 @@ class SaberTests: XCTestCase {
             config
         )
     }
+    
+    func testLock() {
+        let lock = NSRecursiveLock()
+        XCTAssertNotNil(lock)
+    }
 }
 
 private func decode(_ contents: String) -> SaberConfiguration {

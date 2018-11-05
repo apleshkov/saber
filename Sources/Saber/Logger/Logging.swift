@@ -9,6 +9,8 @@ import Foundation
 
 public protocol Logging {
 
+    var currentLevel: LogLevel? { get set }
+    
     func log(_ level: LogLevel, message: @autoclosure () -> String)
     
     func log(_ level: LogLevel, loggable: Loggable)

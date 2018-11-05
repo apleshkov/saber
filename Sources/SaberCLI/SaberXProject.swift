@@ -24,13 +24,10 @@ class SaberXProject {
             .filter { targetNames.contains($0.name) }
             .forEach { (nativeTarget) in
                 var elements: [PBXFileElement] = []
-                let sourcePhases = nativeTarget.buildPhasesReferences
-                    .compactMap { objects.get($0) as? PBXSourcesBuildPhase }
+                let sourcePhases = nativeTarget.buildPhases
+                    .compactMap { $0 as? PBXSourcesBuildPhase }
                 sourcePhases.forEach {
-                    let elems = $0.filesReferences
-                        .compactMap { objects.get($0) as? PBXBuildFile }
-                        .compactMap { try? $0.file() }
-                        .compactMap { $0 }
+                    let elems = $0.files.compactMap { $0.file }
                     elements.append(contentsOf: elems)
                 }
                 let paths: [String] = elements
