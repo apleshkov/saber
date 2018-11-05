@@ -10,7 +10,7 @@ Please, see [wiki](https://github.com/apleshkov/saber/wiki) and [examples](https
 
 ## Installation
 
-Building saber on macOS requires Xcode 9.3+ / Swift 4.1 and Swift Package Manager.
+Building saber on macOS requires Xcode 9.3+ / Swift 4.2 and Swift Package Manager.
 
 ## Development
 
