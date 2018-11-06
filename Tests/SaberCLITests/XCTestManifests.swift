@@ -1,5 +1,13 @@
 import XCTest
 
+extension SaberConfigurationTests {
+    static let __allTests = [
+        ("testRootElements", testRootElements),
+        ("testSpaceIdentation", testSpaceIdentation),
+        ("testTabIdentation", testTabIdentation),
+    ]
+}
+
 extension SaberXcodeTests {
     static let __allTests = [
         ("testXCommandOptions", testXCommandOptions),
@@ -20,6 +28,7 @@ extension SourcesCommandTests {
 #if !os(macOS)
 public func __allTests() -> [XCTestCaseEntry] {
     return [
+        testCase(SaberConfigurationTests.__allTests),
         testCase(SaberXcodeTests.__allTests),
         testCase(SourcesCommandTests.__allTests),
     ]

@@ -6,7 +6,7 @@
 //
 
 import XCTest
-@testable import Saber
+import Saber
 @testable import SaberCLI
 
 class SaberConfigurationTests: XCTestCase {
@@ -20,7 +20,7 @@ class SaberConfigurationTests: XCTestCase {
         XCTAssertEqual(config.accessLevel, "public")
         XCTAssertEqual(config.lazyTypealias, "LazyInjection")
     }
-    
+
     func testSpaceIdentation() {
         let yaml = """
             indentation:
@@ -30,7 +30,7 @@ class SaberConfigurationTests: XCTestCase {
         let config: SaberConfiguration = try! ConfigDecoder(raw: yaml).decode(baseURL: nil)
         XCTAssertEqual(config.indent, "  ")
     }
-    
+
     func testTabIdentation() {
         let yaml = """
             indentation:
