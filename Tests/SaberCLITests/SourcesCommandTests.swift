@@ -6,6 +6,7 @@
 //
 
 import XCTest
+import Saber
 @testable import SaberCLI
 
 class SourcesCommandTests: XCTestCase {
@@ -21,25 +22,41 @@ class SourcesCommandTests: XCTestCase {
     func testSrcCommandOptions() {
         let inputPath = "/path/to/Foo/Sources"
         let outDir = "/path/to/Foo/Saber"
+        let rawConfig = "accessLevel: public"
         let opts = SourcesCommand
             .Options
-            .create(workDir: "")(inputPath)(outDir)("")("")
+            .create(workDir: "")(inputPath)(outDir)(rawConfig)("info")
         XCTAssertEqual(opts.inputDir.path, inputPath)
         XCTAssertEqual(opts.outDir.path, outDir)
-        XCTAssertEqual(opts.config, nil)
-        XCTAssertEqual(opts.logLevel, "")
+        XCTAssertEqual(
+            opts.config,
+            {
+                var config = SaberConfiguration.default
+                config.accessLevel = "public"
+                return config
+            }()
+        )
+        XCTAssertEqual(opts.logLevel, "info")
     }
     
     func testSrcCommandOptionsWithWorkDir() {
-        let workDir = "/path/to/Foo"
+        let workDir = TestPaths.fixturesDir.path
         let inputPath = "Sources"
         let outDir = "Saber"
+        let configPath = "config.yml"
         let opts = SourcesCommand
             .Options
-            .create(workDir: workDir)(inputPath)(outDir)("")("")
+            .create(workDir: workDir)(inputPath)(outDir)(configPath)("")
         XCTAssertEqual(opts.inputDir.path, "\(workDir)/\(inputPath)")
         XCTAssertEqual(opts.outDir.path, "\(workDir)/\(outDir)")
-        XCTAssertEqual(opts.config, nil)
+        XCTAssertEqual(
+            opts.config,
+            {
+                var config = SaberConfiguration.default
+                config.accessLevel = "public"
+                return config
+            }()
+        )
         XCTAssertEqual(opts.logLevel, "")
     }
     

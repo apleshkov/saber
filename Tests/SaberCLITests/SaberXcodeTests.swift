@@ -6,6 +6,7 @@
 //
 
 import XCTest
+import Saber
 @testable import SaberCLI
 
 class SaberXcodeTests: XCTestCase {
@@ -37,29 +38,46 @@ class SaberXcodeTests: XCTestCase {
         #if os(OSX)
         let path = "/path/to/Foo/Foo.xcodeproj"
         let outPath = "/path/to/Foo/Saber"
+        let rawConfig = "accessLevel: public"
+        let logLevel = "info"
         let opts = XcodeProjectCommand
             .Options
-            .create(workDir: "")(path)("Foo, Bar")(outPath)("")("")
+            .create(workDir: "")(path)("Foo, Bar")(outPath)(rawConfig)(logLevel)
         XCTAssertEqual(opts.url.path, path)
         XCTAssertEqual(opts.targetNames.sorted(), ["Bar", "Foo"])
         XCTAssertEqual(opts.outDir.path, outPath)
-        XCTAssertEqual(opts.config, nil)
-        XCTAssertEqual(opts.logLevel, "")
+        XCTAssertEqual(
+            opts.config,
+            {
+                var config = SaberConfiguration.default
+                config.accessLevel = "public"
+                return config
+            }()
+        )
+        XCTAssertEqual(opts.logLevel, logLevel)
         #endif
     }
     
     func testXCommandOptionsWithWorkDir() {
         #if os(OSX)
-        let workDir = "/path/to/Foo"
+        let workDir = TestPaths.fixturesDir.path
         let path = "Foo.xcodeproj"
         let outPath = "Saber"
+        let configPath = "config.yml"
         let opts = XcodeProjectCommand
             .Options
-            .create(workDir: workDir)(path)("Foo")(outPath)("")("")
+            .create(workDir: workDir)(path)("Foo")(outPath)(configPath)("")
         XCTAssertEqual(opts.url.path, "\(workDir)/\(path)")
         XCTAssertEqual(opts.targetNames, ["Foo"])
         XCTAssertEqual(opts.outDir.path, "\(workDir)/\(outPath)")
-        XCTAssertEqual(opts.config, nil)
+        XCTAssertEqual(
+            opts.config,
+            {
+                var config = SaberConfiguration.default
+                config.accessLevel = "public"
+                return config
+            }()
+        )
         XCTAssertEqual(opts.logLevel, "")
         #endif
     }
@@ -71,6 +89,7 @@ class SaberXcodeTests: XCTestCase {
         let opts = XcodeProjectCommand
             .Options
             .create(workDir: "")(path)("SaberTestProject")(outPath)("")("")
+        XCTAssertEqual(opts.config, nil)
         let cmd = XcodeProjectCommand(config: .default)
         _ = cmd.run(opts)
         XCTAssertTrue(FileManager.default.fileExists(atPath: "\(outPath)/AppContainer.saber.swift"))

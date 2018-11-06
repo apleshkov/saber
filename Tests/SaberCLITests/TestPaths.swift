@@ -34,4 +34,9 @@ struct TestPaths {
         return xprojectDir
             .appendingPathComponent("SaberTestProject.xcodeproj")
     }
+    
+    static var configFile: URL {
+        return fixturesDir
+            .appendingPathComponent("config.yml")
+    }
 }
