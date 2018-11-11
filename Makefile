@@ -1,10 +1,12 @@
+TEMP_FOLDER ?= /tmp/Saber.dst
+
 PREFIX ?= /usr/local
-INST_FOLDER = $(PREFIX)/bin
+INSTALL_PATH = $(PREFIX)/bin/saber
 
 SWIFT_BUILD_FLAGS = --configuration release
 SWIFT_TEST_FLAGS = -Xswiftc -DTEST
 
-BIN_PATH = $(shell swift build $(SWIFT_BUILD_FLAGS) --show-bin-path)
+BIN_PATH = $(shell swift build $(SWIFT_BUILD_FLAGS) --show-bin-path)/SaberLauncher
 
 VERSION_SOURCE = SaberVersion
 VERSION_SWIFT_SOURCE = Sources/Saber/SaberVersion.swift
@@ -17,11 +19,22 @@ build:
 	swift build $(SWIFT_BUILD_FLAGS)
 
 install: clean build
-	install -d "$(INST_FOLDER)"
-	install "$(BIN_PATH)/SaberLauncher" "$(INST_FOLDER)/saber"
+	install -d "$(INSTALL_PATH)"
+	install "$(BIN_PATH)" "$(INSTALL_PATH)"
 
 uninstall:
-	rm -rf "$(INST_FOLDER)/saber"
+	rm -rf "$(INSTALL_PATH)"
+
+package: clean build
+	install -d "$(TEMP_FOLDER)/$(INSTALL_PATH)"
+	install "$(BIN_PATH)" "$(TEMP_FOLDER)/$(INSTALL_PATH)"
+	mkdir -p "Packages"
+	pkgbuild \
+		--identifier "org.saber.Saber" \
+		--install-location "/" \
+		--root "$(TEMP_FOLDER)" \
+		--version "$(CURRENT_VERSION)" \
+		"Packages/Saber-$(CURRENT_VERSION).pkg"
 
 test:
 	swift test $(SWIFT_TEST_FLAGS)
