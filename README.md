@@ -44,7 +44,7 @@ Available commands:
 
 _Saber_ traverses swift-files `--from` __recursively__ and generates container classes to `--out`.
 
-Example: `saber --workDir . --from Sources --out Sources/Saber`
+Example: `saber sources --workDir . --from Sources --out Sources/Saber`
 
 ```
 $ saber help sources
@@ -70,7 +70,7 @@ Generate containers from sources
 
 _Saber_ parses Xcode project at `--path`, traverses enumerated `--targets` and generates container classes to `--out`. The main difference from the `sources` command is an ability to work with __Swift modules__.
 
-Example: `saber --workDir . --path MyProject.xcodeproj --targets Target1,Target2 --out Sources/Saber`
+Example: `saber xcodeproj --workDir . --path MyProject.xcodeproj --targets Target1,Target2 --out Sources/Saber`
 
 ```
 $ saber help xcodeproj
