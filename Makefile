@@ -1,7 +1,7 @@
 TEMP_FOLDER ?= /tmp/Saber.dst
 
 PREFIX ?= /usr/local
-INSTALL_PATH = $(PREFIX)/bin/saber
+INSTALL_DIR = $(PREFIX)/bin
 
 SWIFT_BUILD_FLAGS = --configuration release
 SWIFT_TEST_FLAGS = -Xswiftc -DTEST
@@ -20,11 +20,11 @@ build:
 	swift build $(SWIFT_BUILD_FLAGS) $(SWIFT_BUILD_XFLAGS)
 
 install: clean build
-	install -d "$(INSTALL_PATH)"
-	install "$(BIN_PATH)" "$(INSTALL_PATH)"
+	install -d "$(INSTALL_DIR)"
+	install "$(BIN_PATH)" "$(INSTALL_DIR)/saber"
 
 uninstall:
-	rm -rf "$(INSTALL_PATH)"
+	rm -rf "$(INSTALL_DIR)/saber"
 
 test: clean
 	swift test $(SWIFT_TEST_FLAGS)
