@@ -12,11 +12,15 @@ VERSION_SOURCE = SaberVersion
 VERSION_SWIFT_SOURCE = Sources/Saber/SaberVersion.swift
 CURRENT_VERSION = $(shell cat "$(VERSION_SOURCE)")
 
+PKG_PATH = Packages/Saber-$(CURRENT_VERSION).pkg
+
 clean:
+	rm -f "$(PKG_PATH)"
+	rm -rf "$(TEMP_FOLDER)"
 	swift package clean
 
 build:
-	swift build $(SWIFT_BUILD_FLAGS)
+	swift build $(SWIFT_BUILD_FLAGS) $(SWIFT_BUILD_XFLAGS)
 
 install: clean build
 	install -d "$(INSTALL_PATH)"
@@ -34,10 +38,10 @@ package: clean build
 		--install-location "/" \
 		--root "$(TEMP_FOLDER)" \
 		--version "$(CURRENT_VERSION)" \
-		"Packages/Saber-$(CURRENT_VERSION).pkg"
+		"$(PKG_PATH)"
 
-test:
-	swift test $(SWIFT_TEST_FLAGS)
+test: clean
+	swift test $(SWIFT_TEST_FLAGS) $(SWIFT_TEST_XFLAGS)
 
 docker_linux_test:
 	swift test --generate-linuxmain
