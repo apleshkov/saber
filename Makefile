@@ -6,7 +6,7 @@ INSTALL_DIR = $(PREFIX)/bin
 SWIFT_BUILD_FLAGS = --configuration release
 SWIFT_TEST_FLAGS = -Xswiftc -DTEST
 
-BIN_PATH = $(shell swift build $(SWIFT_BUILD_FLAGS) --show-bin-path)/SaberLauncher
+BIN_PATH = $(shell swift build $(SWIFT_BUILD_FLAGS) --show-bin-path)/saber
 
 VERSION_SOURCE = SaberVersion
 VERSION_SWIFT_SOURCE = Sources/Saber/SaberVersion.swift
@@ -21,7 +21,7 @@ build:
 
 install: clean build
 	install -d "$(INSTALL_DIR)"
-	install "$(BIN_PATH)" "$(INSTALL_DIR)/saber"
+	install "$(BIN_PATH)" "$(INSTALL_DIR)"
 
 uninstall:
 	rm -rf "$(INSTALL_DIR)/saber"

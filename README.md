@@ -12,11 +12,11 @@ Please, see [wiki](https://github.com/apleshkov/saber/wiki) and [examples](https
 
 Building on macOS requires Xcode w/ Swift 4.2 and Swift Package Manager.
 
-## Development
+### [Mint](https://github.com/yonaskolb/mint)
 
-__Xcode__: clone, run `make xcodeproj` and then open a generated `Saber.xcodeproj`. Use `make docker_linux_test` to test on Linux inside a [docker](https://www.docker.com) container.
-
-__Linux__: `make clean`, `make build` and `make test`
+```
+$ mint install apleshkov/saber
+```
 
 ### Homebrew
 
@@ -108,6 +108,12 @@ indentation:
 # Lazy typealias (see wiki; none by default)
 lazyTypealias: LazyInjection
 ```
+
+## Development
+
+__Xcode__: clone, run `make xcodeproj` and then open a generated `Saber.xcodeproj`. Use `make docker_linux_test` to test on Linux inside a [docker](https://www.docker.com) container.
+
+__Linux__: `make clean`, `make build` and `make test`
 
 ## License
 

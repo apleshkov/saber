@@ -5,6 +5,10 @@ import PackageDescription
 var package = Package(
     name: "Saber",
     products: [
+        .executable(
+            name: "saber",
+            targets: ["SaberLauncher"]
+        ),
         .library(
             name: "Saber",
             targets: ["Saber"]
