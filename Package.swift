@@ -15,8 +15,8 @@ var package = Package(
         )
     ],
     dependencies: [
-        .package(url: "https://github.com/jpsim/SourceKitten.git", from: "0.21.0"),
-        .package(url: "https://github.com/Carthage/Commandant.git", from: "0.14.0"),
+        .package(url: "https://github.com/jpsim/SourceKitten.git", from: "0.22.0"),
+        .package(url: "https://github.com/Carthage/Commandant.git", from: "0.15.0"),
     ],
     targets: [
         .target(
@@ -45,7 +45,7 @@ var package = Package(
 
 #if os(OSX)
 package.dependencies.append(
-    .package(url: "https://github.com/xcode-project-manager/xcodeproj.git", from: "5.0.0-rc1")
+    .package(url: "https://github.com/xcode-project-manager/xcodeproj.git", from: "6.4.0")
 )
 package.targets[1].dependencies.append("xcodeproj")
 #endif

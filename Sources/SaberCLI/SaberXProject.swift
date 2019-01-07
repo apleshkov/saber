@@ -8,7 +8,7 @@
 #if os(OSX)
 
 import Foundation
-import Basic
+import PathKit
 import xcodeproj
 
 class SaberXProject {
@@ -16,11 +16,10 @@ class SaberXProject {
     let targets: [Target]
     
     init(path: String, targetNames: Set<String>) throws {
-        let absolutePath = AbsolutePath(path).parentDirectory
+        let absolutePath = Path(path).parent().absolute()
         var targets: [Target] = []
         let project = try XcodeProj(pathString: path).pbxproj
-        let objects = project.objects
-        objects.nativeTargets.values
+        project.nativeTargets
             .filter { targetNames.contains($0.name) }
             .forEach { (nativeTarget) in
                 var elements: [PBXFileElement] = []
@@ -34,7 +33,7 @@ class SaberXProject {
                     .compactMap { try? $0.fullPath(sourceRoot: absolutePath) }
                     .compactMap { $0 }
                     .filter { $0.extension == "swift" }
-                    .compactMap { $0.asString }
+                    .compactMap { $0.string }
                 targets.append(
                     Target(name: nativeTarget.name, filePaths: paths)
                 )
