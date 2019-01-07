@@ -20,7 +20,7 @@ $ mint install apleshkov/saber
 
 ### Homebrew
 
-_TODO_
+_TODO_ ([not notable enough](https://github.com/Homebrew/homebrew-core/pull/34604) yet)
 
 ### Make
 
