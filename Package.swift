@@ -8,10 +8,6 @@ var package = Package(
         .executable(
             name: "saber",
             targets: ["SaberLauncher"]
-        ),
-        .library(
-            name: "Saber",
-            targets: ["Saber"]
         )
     ],
     dependencies: [
