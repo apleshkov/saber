@@ -32,6 +32,44 @@ class FactoryContainerTests: XCTestCase {
         )
     }
     
+    func testDependencyAndExternalOrder() {
+        let parsedFactory = ParsedDataFactory()
+        try! FileParser(contents:
+            """
+            // @saber.container(FooContainer)
+            // @saber.scope(Foo)
+            protocol FooContaining {}
+
+            // @saber.container(BarContainer)
+            // @saber.scope(Bar)
+            protocol BarContaining {}
+
+            // @saber.container(QuuxContainer)
+            // @saber.scope(Quux)
+            // @saber.dependsOn(FooContainer, BarContainer)
+            // @saber.externals(FooExternal, BarExternal)
+            protocol QuuxContaining {}
+            """
+            ).parse(to: parsedFactory)
+        let repo = try! TypeRepository(parsedData: parsedFactory.make())
+        let quuxContainer = try! ContainerFactory(repo: repo).make().test_sorted()[2]
+        XCTAssertEqual(
+            quuxContainer,
+            Container(
+                name: "QuuxContainer",
+                protocolName: "QuuxContaining",
+                dependencies: [
+                    TypeUsage(name: "FooContainer"),
+                    TypeUsage(name: "BarContainer")
+                ],
+                externals: [
+                    ContainerExternal(type: TypeUsage(name: "FooExternal")),
+                    ContainerExternal(type: TypeUsage(name: "BarExternal"))
+                ]
+            )
+        )
+    }
+    
     func testImportsAndThreadSafe() {
         let parsedFactory = ParsedDataFactory()
         try! FileParser(contents:

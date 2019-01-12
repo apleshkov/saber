@@ -90,51 +90,13 @@ class DataFactoryAccessorTests: XCTestCase {
         )
     }
     
-    func testExternalProperty() {
-        let resolver = TypeResolver.external(
-            from: TypeUsage(name: "SomeExternal"),
-            kind: .property(name: "foo")
+    func testExternal() {
+        let resolver = TypeResolver<TypeUsage>.external(
+            TypeUsage(name: "SomeExternal")
         )
         XCTAssertEqual(
             ContainerDataFactory().accessor(of: resolver, owner: "self"),
-            "self.someExternal.foo"
-        )
-    }
-    
-    func testExternalFunction() {
-        let bazResolver = TypeResolver.external(
-            from: TypeUsage(name: "SomeExternal"),
-            kind: .property(name: "baz")
-        )
-        let quuxResolver = TypeResolver.derived(
-            from: TypeUsage(name: "ContainerB"),
-            typeResolver: .derived(
-                from: TypeUsage(name: "ContainerA"),
-                typeResolver: .explicit(TypeUsage(name: "Quux"))
-            )
-        )
-        let resolver = TypeResolver.external(
-            from: TypeUsage(name: "SomeExternal"),
-            kind: .method(
-                name: "foo",
-                args: [
-                    FunctionInvocationArgument(
-                        name: "bar",
-                        typeResolver: .explicit(TypeUsage(name: "Bar"))
-                    ),
-                    FunctionInvocationArgument(
-                        name: "baz",
-                        typeResolver: bazResolver
-                    ),
-                    FunctionInvocationArgument(
-                        name: "quux",
-                        typeResolver: quuxResolver
-                    )
-                ])
-        )
-        XCTAssertEqual(
-            ContainerDataFactory().accessor(of: resolver, owner: "self"),
-            "self.someExternal.foo(bar: self.bar, baz: self.someExternal.baz, quux: self.containerB.containerA.quux)"
+            "self.someExternal"
         )
     }
     
@@ -142,13 +104,12 @@ class DataFactoryAccessorTests: XCTestCase {
         let resolver = TypeResolver<TypeUsage>.derived(
             from: TypeUsage(name: "Parent"),
             typeResolver: .external(
-                from: TypeUsage(name: "ParentExternal"),
-                kind: .property(name: "bar")
+                TypeUsage(name: "ParentExternal")
             )
         )
         XCTAssertEqual(
             ContainerDataFactory().accessor(of: resolver, owner: "this", isLazy: true),
-            "{ [unowned this] in return this.parent.parentExternal.bar }"
+            "{ [unowned this] in return this.parent.parentExternal }"
         )
     }
 }

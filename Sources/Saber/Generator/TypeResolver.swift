@@ -13,7 +13,7 @@ indirect enum TypeResolver<T>: Equatable where T: Equatable & SomeType {
     case provided(TypeUsage, by: TypeProvider)
     case bound(TypeUsage, to: T)
     case derived(from: T, typeResolver: TypeResolver)
-    case external(from: T, kind: ContainerExternal.Kind)
+    case external(TypeUsage)
 }
 
 extension TypeResolver: CustomStringConvertible {
@@ -33,15 +33,8 @@ extension TypeResolver: CustomStringConvertible {
             return "'\(mimic.fullName(modular: true))' is bound to '\(some.fullName(modular: true))'"
         case .derived(let from, let typeResolver):
             return "derived from '\(from.fullName(modular: true))' as \(typeResolver)"
-        case .external(let from, let kind):
-            switch kind {
-            case .property(let name):
-                return "external \(from.fullName(modular: true)).\(name)"
-            case .method(let name, let args):
-                return "external \(from.fullName(modular: true)).\(name)("
-                    + args.map { $0.description }.joined(separator: ", ")
-                    + ")"
-            }
+        case .external(let some):
+            return "external '\(some.fullName(modular: true))'"
         }
     }
 }

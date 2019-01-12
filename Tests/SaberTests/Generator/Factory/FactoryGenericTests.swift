@@ -159,13 +159,8 @@ class FactoryGenericTests: XCTestCase {
             """
             // @saber.container(App)
             // @saber.scope(Singleton)
-            // @saber.externals(AppExternals)
+            // @saber.externals(Foo<Int>, Foo<Float>)
             protocol AppConfig {}
-
-            class AppExternals {
-                var foo1: Foo<Int>
-                var foo2: Foo<Float>
-            }
 
             // @saber.scope(Singleton)
             class Bar {
@@ -185,15 +180,13 @@ class FactoryGenericTests: XCTestCase {
                 MemberInjection(
                     name: "foo1",
                     typeResolver: .external(
-                        from: TypeUsage(name: "AppExternals"),
-                        kind: .property(name: "foo1")
+                        TypeUsage(name: "Foo", generics: [TypeUsage(name: "Int")])
                     )
                 ),
                 MemberInjection(
                     name: "foo2",
                     typeResolver: .external(
-                        from: TypeUsage(name: "AppExternals"),
-                        kind: .property(name: "foo2")
+                        TypeUsage(name: "Foo", generics: [TypeUsage(name: "Float")])
                     )
                 )
             ]

@@ -119,6 +119,10 @@ class ParentContainerTests: XCTestCase {
         }()
         let data = ContainerDataFactory().make(from: container)
         XCTAssertEqual(
+            data.initializer.args.map { "\($0.name): \($0.typeName)" },
+            ["containerA: ContainerA", "containerB: ContainerB"]
+        )
+        XCTAssertEqual(
             data.storedProperties,
             [
                 ["public unowned let containerA: ContainerA"],
@@ -158,6 +162,19 @@ class ParentContainerTests: XCTestCase {
                     "}"
                 ]
             ]
+        )
+    }
+    
+    func testMultipleChildContainersOrder() {
+        let fooDependency = TypeUsage(name: "FooContainer")
+        let barDependency = TypeUsage(name: "BarContainer")
+        let container = Container(name: "Quux")
+            .add(dependency: fooDependency)
+            .add(dependency: barDependency)
+        let data = ContainerDataFactory().make(from: container)
+        XCTAssertEqual(
+            data.initializer.args.map { "\($0.name): \($0.typeName)" },
+            ["fooContainer: FooContainer", "barContainer: BarContainer"]
         )
     }
 }

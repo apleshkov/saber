@@ -177,13 +177,9 @@ class FactoryDerivedTests: XCTestCase {
         let parsedFactory = ParsedDataFactory()
         try! FileParser(contents:
             """
-            struct AppExternal {
-                var foo: Foo
-            }
-
             // @saber.container(App)
             // @saber.scope(Singleton)
-            // @saber.externals(AppExternal)
+            // @saber.externals(Foo)
             protocol AppConfig {}
 
             // @saber.container(User)
@@ -213,8 +209,7 @@ class FactoryDerivedTests: XCTestCase {
                                         typeResolver: .derived(
                                             from: TypeUsage(name: "App"),
                                             typeResolver: .external(
-                                                from: TypeUsage(name: "AppExternal"),
-                                                kind: .property(name: "foo")
+                                                TypeUsage(name: "Foo")
                                             )
                                         )
                                     )

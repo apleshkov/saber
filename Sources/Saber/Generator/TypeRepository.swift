@@ -59,23 +59,10 @@ extension TypeRepository {
         var name: ScopeName
         var container: ParsedContainer
         var keys: Set<Key>
-        var dependencies: Set<ScopeName>
-        var externals: [Key : ExternalMember]
+        var dependencies: [ScopeName]
+        var externals: [Key]
         var providers: [Key : (of: Key, method: ParsedMethod)]
         var binders: [Key : Key]
-    }
-    
-    enum ExternalMember: Equatable {
-        case property(from: Key, name: String)
-        case method(from: Key, parsed: ParsedMethod)
-
-        var fromKey: Key {
-            switch self {
-            case .property(let fromKey, _),
-                 .method(let fromKey, _):
-                return fromKey
-            }
-        }
     }
     
     indirect enum Resolver: Equatable {
@@ -84,7 +71,7 @@ extension TypeRepository {
         case provider(Key)
         case binder(Key)
         case derived(from: ScopeName, resolver: Resolver)
-        case external(member: ExternalMember)
+        case external
     }
 }
 
@@ -100,29 +87,30 @@ extension TypeRepository {
         return scope.container
     }
     
-    func find(by key: Key) throws -> Info {
+    func findUnique(by key: Key) throws -> Info? {
         if case .name(let name) = key,
             let collisions = shortenNameCollisions[name],
             let first = collisions.first {
             guard collisions.count == 1 else {
                 throw Throwable.declCollision(name: name, modules: collisions)
             }
-            return try find(by: .modular(module: first, name: name))
+            return try findUnique(by: .modular(module: first, name: name))
         }
-        guard let info = typeInfos[key] else {
+        return typeInfos[key]
+    }
+    
+    func find(by key: Key) throws -> Info {
+        guard let info = try findUnique(by: key) else {
             throw Throwable.message("Unable to find '\(key)'")
         }
         return info
     }
-
-    func find(by name: String) -> Info? {
+    
+    func find(by name: String) throws -> Info? {
         if let key = modularNames[name] {
-            return try? find(by: key)
+            return try findUnique(by: key)
         }
-        if let info = try? find(by: .name(name)) {
-            return info
-        }
-        return nil
+        return try findUnique(by: .name(name))
     }
 
     private func register(_ info: Info) {
@@ -227,8 +215,8 @@ extension TypeRepository {
                 name: scopeName,
                 container: parsedContainer,
                 keys: [],
-                dependencies: Set(deps),
-                externals: [:],
+                dependencies: deps,
+                externals: [],
                 providers: [:],
                 binders: [:]
             )
@@ -291,7 +279,7 @@ extension TypeRepository {
         for (key, entry) in binders {
             let mimicKey: Key
             let usage = entry.usage
-            if let mimicInfo = find(by: usage.genericName) {
+            if let mimicInfo = try find(by: usage.genericName) {
                 mimicKey = mimicInfo.key
             } else {
                 mimicKey = makeKey(for: usage)
@@ -312,7 +300,7 @@ extension TypeRepository {
                 throw Throwable.message("Unable to get provided type: '\(key)' \(method)' returns nothing")
             }
             let providedKey: Key
-            if let providedInfo = find(by: usage.genericName) {
+            if let providedInfo = try find(by: usage.genericName) {
                 providedKey = providedInfo.key
             } else {
                 providedKey = makeKey(for: usage)
@@ -349,72 +337,25 @@ extension TypeRepository {
     private func fillExternals(parsedData: ParsedData) throws {
         Logger?.info("Processing externals...")
         for (_, parsedContainer) in parsedData.containers {
-            var members: [Key : ExternalMember] = [:]
+            var externals: [Key] = []
             try parsedContainer.externals.forEach { (usage) in
                 Logger?.debug("External '\(usage.genericName)'")
-                guard let externalInfo = find(by: usage.genericName) else {
-                    throw Throwable.message("Invalid '\(parsedContainer.name)' external: unable to find '\(usage.fullName)'")
-                }
-                guard case .type(let externalParsedType) = externalInfo.parsed else {
-                    throw Throwable.message("Invalid '\(parsedContainer.name)' external: unable to find '\(externalInfo.key)' parsed type")
-                }
-                externalParsedType.properties.forEach {
-                    guard $0.accessLevel?.hasSuffix("private") == false else {
-                        Logger?.debug("Ignoring external '\(usage.genericName)' property '\($0)': private/fileprivate")
-                        return
-                    }
-                    let info: Info
-                    if let foundInfo = find(by: $0.type.genericName) {
-                        info = foundInfo
-                    } else {
-                        let key: Key = makeKey(for: $0.type)
-                        info = Info(
-                            key: key,
-                            scopeName: externalInfo.scopeName,
-                            parsed: .usage($0.type)
-                        )
-                        register(info)
-                    }
-                    members[info.key] = .property(
-                        from: externalInfo.key,
-                        name: $0.name
+                let info: Info
+                if let foundInfo = try find(by: usage.genericName) {
+                    info = foundInfo
+                } else {
+                    let key: Key = makeKey(for: usage)
+                    info = Info(
+                        key: key,
+                        scopeName: nil,
+                        parsed: .usage(usage)
                     )
-                    Logger?.debug("External '\(usage.genericName)' property: \($0)")
+                    register(info)
                 }
-                externalParsedType.methods.forEach {
-                    guard $0.isStatic == false else {
-                        Logger?.debug("Ignoring external '\(usage.genericName)' method '\($0)': static")
-                        return
-                    }
-                    guard let returnedUsage = $0.returnType else {
-                        Logger?.debug("Ignoring external '\(usage.genericName)' method '\($0)': returns nothing")
-                        return
-                    }
-                    guard $0.accessLevel?.hasSuffix("private") == false else {
-                        Logger?.debug("Ignoring external '\(usage.genericName)' method '\($0)': private/fileprivate")
-                        return
-                    }
-                    let info: Info
-                    if let foundInfo = find(by: returnedUsage.genericName) {
-                        info = foundInfo
-                    } else {
-                        let key: Key = makeKey(for: returnedUsage)
-                        info = Info(
-                            key: key,
-                            scopeName: externalInfo.scopeName,
-                            parsed: .usage(returnedUsage)
-                        )
-                        register(info)
-                    }
-                    members[info.key] = ExternalMember.method(
-                        from: externalInfo.key,
-                        parsed: $0
-                    )
-                    Logger?.debug("External '\(returnedUsage.genericName)' method: \($0)")
-                }
+                externals.append(info.key)
             }
             let scopeKey = parsedContainer.scopeName
-            scopes[scopeKey]?.externals = members
+            scopes[scopeKey]?.externals = externals
         }
     }
     
@@ -426,8 +367,8 @@ extension TypeRepository {
             for key in scope.keys {
                 dict[key] = .explicit
             }
-            for (key, member) in scope.externals {
-                dict[key] = .external(member: member)
+            for key in scope.externals {
+                dict[key] = .external
             }
             for (providerKey, entry) in scope.providers {
                 dict[entry.of] = .provider(providerKey)
@@ -479,8 +420,8 @@ extension TypeRepository.Resolver: CustomStringConvertible {
             return "bound with '\(key)'"
         case .provider(let key):
             return "provided by '\(key)'"
-        case .external(let member):
-            return "external from '\(member.fromKey)'"
+        case .external:
+            return "external"
         case .derived(let from, let resolver):
             return "derived from '\(from)' as \(resolver)"
         }

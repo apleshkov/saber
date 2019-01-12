@@ -54,17 +54,5 @@ public struct Container: Equatable {
 
 struct ContainerExternal: Equatable {
     
-    enum Kind: Equatable {
-        case property(name: String)
-        case method(name: String, args: [FunctionInvocationArgument])
-    }
-    
     var type: TypeUsage
-    
-    var kinds: [Kind]
-    
-    init(type: TypeUsage, kinds: [Kind]) {
-        self.type = type
-        self.kinds = kinds
-    }
 }

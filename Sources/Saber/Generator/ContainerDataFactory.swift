@@ -265,14 +265,8 @@ public class ContainerDataFactory {
             return "\(owner).\(memberName(of: usage))"
         case .derived(let someContainer, let typeResolver):
             return "\(owner).\(accessor(of: typeResolver, owner: memberName(of: someContainer)))"
-        case .external(let someExternal, let kind):
-            switch kind {
-            case .property(let name):
-                return "\(owner).\(memberName(of: someExternal)).\(name)"
-            case .method(let name, let args):
-                let receiver = "\(owner).\(memberName(of: someExternal))"
-                return invoked(receiver, isOptional: false, with: name, args: args)
-            }
+        case .external(let usage):
+            return "\(owner).\(memberName(of: usage))"
         }
     }
     

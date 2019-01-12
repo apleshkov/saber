@@ -38,11 +38,11 @@ class TypeRepoModuleTests: XCTestCase {
             .modular(module: "A", name: "Foo")
         )
         XCTAssertEqual(
-            repo.find(by: "Foo")?.key,
+            try! repo.find(by: "Foo")?.key,
             .modular(module: "A", name: "Foo")
         )
         XCTAssertEqual(
-            repo.find(by: "A.Foo")?.key,
+            try! repo.find(by: "A.Foo")?.key,
             .modular(module: "A", name: "Foo")
         )
         XCTAssertEqual(
@@ -80,11 +80,11 @@ class TypeRepoModuleTests: XCTestCase {
             )
         })
         XCTAssertEqual(
-            repo.find(by: "Foo")?.key,
+            try? repo.find(by: "Foo")?.key,
             nil
         )
         XCTAssertEqual(
-            repo.find(by: "A.Foo")?.key,
+            try! repo.find(by: "A.Foo")?.key,
             .modular(module: "A", name: "Foo")
         )
         XCTAssertEqual(

@@ -45,13 +45,8 @@ extension TypeResolver {
             return usage.fullName(modular: modular)
         case .derived(let from, let resolver):
             return "\(from.fullName(modular: modular)).\(resolver.test_sortingKey(modular: modular))"
-        case .external(let from, let kind):
-            switch kind {
-            case .method(let name, _):
-                return "\(from.fullName(modular: modular)).\(name)"
-            case .property(let name):
-                return "\(from.fullName(modular: modular)).\(name)"
-            }
+        case .external(let usage):
+            return usage.fullName(modular: modular)
         }
     }
 }
@@ -70,23 +65,5 @@ extension Array where Element == Container {
     
     func test_sorted() -> [Element] {
         return sorted { $0.name < $1.name }
-    }
-}
-
-extension Array where Element == ContainerExternal.Kind {
-
-    private static func kindName(kind: ContainerExternal.Kind) -> String {
-        switch kind {
-        case .method(let name, _):
-            return name
-        case .property(let name):
-            return name
-        }
-    }
-
-    func test_sorted() -> [Element] {
-        return sorted {
-            return Array.kindName(kind: $0) < Array.kindName(kind: $1)
-        }
     }
 }

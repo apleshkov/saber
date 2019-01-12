@@ -69,27 +69,27 @@ class ContainerParserTests: XCTestCase {
         XCTAssertEqual(
             try parse(contents:
                 """
-                // @saber.container(FooContainer)
-                // @saber.scope(FooScope)
-                // @saber.dependsOn(BarContainer, BazContainer)
-                // @saber.externals(FooExternals1, FooExternals2)
+                // @saber.container(QuuxContainer)
+                // @saber.scope(Quux)
+                // @saber.dependsOn(FooContainer, BarContainer)
+                // @saber.externals(FooExternal, BarExternal)
                 // @saber.imports(UIKit)
                 // @saber.threadSafe
-                protocol FooContaining {}
+                protocol QuuxContaining {}
                 """
             ),
             [
                 ParsedContainer(
-                    name: "FooContainer",
-                    scopeName: "FooScope",
-                    protocolName: "FooContaining",
+                    name: "QuuxContainer",
+                    scopeName: "Quux",
+                    protocolName: "QuuxContaining",
                     dependencies: [
-                        ParsedTypeUsage(name: "BarContainer"),
-                        ParsedTypeUsage(name: "BazContainer")
+                        ParsedTypeUsage(name: "FooContainer"),
+                        ParsedTypeUsage(name: "BarContainer")
                     ],
                     externals: [
-                        ParsedTypeUsage(name: "FooExternals1"),
-                        ParsedTypeUsage(name: "FooExternals2")
+                        ParsedTypeUsage(name: "FooExternal"),
+                        ParsedTypeUsage(name: "BarExternal")
                     ],
                     isThreadSafe: true,
                     imports: ["UIKit"]

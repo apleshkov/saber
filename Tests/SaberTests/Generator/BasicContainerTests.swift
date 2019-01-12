@@ -12,8 +12,8 @@ class BasicContainerTests: XCTestCase {
 
     func testInitArguments() {
         var container = Container(name: "Test")
-        container.externals.append(ContainerExternal(type: TypeUsage(name: "Env"), kinds: []))
-        container.externals.append(ContainerExternal(type: TypeUsage(name: "User").set(isOptional: true), kinds: []))
+        container.externals.append(ContainerExternal(type: TypeUsage(name: "Env")))
+        container.externals.append(ContainerExternal(type: TypeUsage(name: "User").set(isOptional: true)))
         let data = ContainerDataFactory().make(from: container)
         XCTAssertEqual(
             data.initializer.args.map { "\($0.name): \($0.typeName)" },

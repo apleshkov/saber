@@ -10,6 +10,58 @@ import XCTest
 
 class RendererModuleTests: XCTestCase {
     
+    func testMultipleDependenciesAndExternals() {
+        let factory = ParsedDataFactory()
+        try! FileParser(contents:
+            """
+            // @saber.container(FooContainer)
+            // @saber.scope(Foo)
+            protocol FooContaining {}
+
+            // @saber.container(BarContainer)
+            // @saber.scope(Bar)
+            protocol BarContaining {}
+
+            // @saber.container(QuuxContainer)
+            // @saber.scope(Quux)
+            // @saber.dependsOn(FooContainer, BarContainer)
+            // @saber.externals(ExternalA, ExternalB)
+            protocol QuuxContaining {}
+            
+            """
+            ).parse(to: factory)
+        let repo = try! TypeRepository(parsedData: factory.make())
+        let containers = try! ContainerFactory(repo: repo).make().test_sorted()
+        let quuxContainer = containers.test_sorted()[2]
+        let data = ContainerDataFactory().make(from: quuxContainer)
+        let out = Renderer(data: data).render()
+        XCTAssertEqual(
+            out,
+            """
+            import Foundation
+
+            public class QuuxContainer: QuuxContaining {
+
+                public unowned let fooContainer: FooContainer
+
+                public unowned let barContainer: BarContainer
+
+                public let externalA: ExternalA
+
+                public let externalB: ExternalB
+
+                public init(fooContainer: FooContainer, barContainer: BarContainer, externalA: ExternalA, externalB: ExternalB) {
+                    self.fooContainer = fooContainer
+                    self.barContainer = barContainer
+                    self.externalA = externalA
+                    self.externalB = externalB
+                }
+
+            }
+            """
+        )
+    }
+    
     func testModules() {
         let factory = ParsedDataFactory()
         try! FileParser(contents:
@@ -21,12 +73,8 @@ class RendererModuleTests: XCTestCase {
             // @saber.container(SessionContainer)
             // @saber.scope(Session)
             // @saber.dependsOn(AppContainer)
-            // @saber.externals(SessionParams)
+            // @saber.externals(User)
             protocol SessionContaining {}
-
-            struct SessionParams {
-                var user: User
-            }
 
             // @saber.scope(Session)
             // @saber.cached
@@ -63,13 +111,13 @@ class RendererModuleTests: XCTestCase {
 
                 public unowned let appContainer: Module.AppContainer
 
-                public let sessionParams: Module.SessionParams
+                public let user: User
 
                 private var cached_networkManager: Module.NetworkManager?
 
-                public init(appContainer: Module.AppContainer, sessionParams: Module.SessionParams) {
+                public init(appContainer: Module.AppContainer, user: User) {
                     self.appContainer = appContainer
-                    self.sessionParams = sessionParams
+                    self.user = user
                 }
 
                 public var friendCollection: FriendCollection {
@@ -117,7 +165,7 @@ class RendererModuleTests: XCTestCase {
                 }
 
                 private func injectTo(networkManager: Module.NetworkManager) {
-                    networkManager.user = self.sessionParams.user
+                    networkManager.user = self.user
                 }
 
             }

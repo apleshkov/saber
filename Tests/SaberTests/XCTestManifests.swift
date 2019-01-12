@@ -53,8 +53,7 @@ extension DataFactoryAccessorTests {
         ("testDependency", testDependency),
         ("testDerivedContainer", testDerivedContainer),
         ("testExplicit", testExplicit),
-        ("testExternalFunction", testExternalFunction),
-        ("testExternalProperty", testExternalProperty),
+        ("testExternal", testExternal),
         ("testLazy", testLazy),
         ("testMultipleInheritance", testMultipleInheritance),
         ("testProvidedByType", testProvidedByType),
@@ -155,6 +154,7 @@ extension FactoryContainerTests {
         ("testContainerAsDependency", testContainerAsDependency),
         ("testContainerAsDerivedDependency", testContainerAsDerivedDependency),
         ("testCyclicDependencies", testCyclicDependencies),
+        ("testDependencyAndExternalOrder", testDependencyAndExternalOrder),
         ("testImportsAndThreadSafe", testImportsAndThreadSafe),
         ("testSimple", testSimple),
     ]
@@ -189,9 +189,10 @@ extension FactoryExtensionTests {
 
 extension FactoryExternalTests {
     static let __allTests = [
-        ("testIgnoring", testIgnoring),
-        ("testInvalidCyclicDependency", testInvalidCyclicDependency),
-        ("testUsage", testUsage),
+        ("testDeclared", testDeclared),
+        ("testInitializer", testInitializer),
+        ("testNested", testNested),
+        ("testOptional", testOptional),
     ]
 }
 
@@ -277,6 +278,7 @@ extension MethodParserTests {
 extension ParentContainerTests {
     static let __allTests = [
         ("testMultipleChildContainers", testMultipleChildContainers),
+        ("testMultipleChildContainersOrder", testMultipleChildContainersOrder),
         ("testParentContainerDependencies", testParentContainerDependencies),
     ]
 }
@@ -319,6 +321,7 @@ extension RendererLazyTests {
 extension RendererModuleTests {
     static let __allTests = [
         ("testModules", testModules),
+        ("testMultipleDependenciesAndExternals", testMultipleDependenciesAndExternals),
     ]
 }
 

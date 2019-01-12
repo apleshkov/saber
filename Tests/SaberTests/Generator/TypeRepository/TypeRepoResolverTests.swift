@@ -75,51 +75,28 @@ class TypeRepoResolverTests: XCTestCase {
                 """
                 // @saber.container(App)
                 // @saber.scope(Singleton)
-                // @saber.externals(AppExternal)
+                // @saber.externals(Foo, BarModule.Bar?, Quux<Int>!)
                 protocol AppConfig {}
-
-                struct AppExternal {
-                    var foo: Foo
-                    func bar() -> Bar {}
-                    let quux: Quux<Int>?
-                }
                 """
                 ).parse(to: factory)
             return factory.make()
         }()
         let repo = try! TypeRepository(parsedData: parsedData)
         XCTAssertEqual(
-            repo.resolver(for: .name("Foo"), scopeName: "Singleton"),
-            .external(
-                member: .property(
-                    from: .name("AppExternal"),
-                    name: "foo"
-                )
-            )
+            repo.resolver(for: .name("Foo"), scopeName: "Singleton"),            
+            .external
+        )
+        XCTAssertEqual(
+            repo.resolver(for: .name("BarModule.Bar"), scopeName: "Singleton"),
+            .external
         )
         XCTAssertEqual(
             repo.resolver(for: .name("Bar"), scopeName: "Singleton"),
-            .external(
-                member: TypeRepository.ExternalMember.method(
-                    from: .name("AppExternal"),
-                    parsed: ParsedMethod(
-                        name: "bar",
-                        args: [],
-                        returnType: ParsedTypeUsage(name: "Bar"),
-                        isStatic: false,
-                        annotations: []
-                    )
-                )
-            )
+            nil
         )
         XCTAssertEqual(
             repo.resolver(for: .name("Quux<Int>"), scopeName: "Singleton"),
-            .external(
-                member: .property(
-                    from: .name("AppExternal"),
-                    name: "quux"
-                )
-            )
+            .external
         )
     }
     
@@ -287,7 +264,7 @@ class TypeRepoResolverTests: XCTestCase {
                 """
                 // @saber.container(App)
                 // @saber.scope(Singleton)
-                // @saber.externals(AppExternal)
+                // @saber.externals(Baz)
                 protocol AppConfig {}
 
                 // @saber.scope(Singleton)
@@ -298,10 +275,6 @@ class TypeRepoResolverTests: XCTestCase {
                 class BarProvider {
                     // @saber.provider
                     func provide() -> Bar {}
-                }
-
-                struct AppExternal {
-                    var baz: Baz
                 }
 
                 // @saber.scope(Singleton)
@@ -334,9 +307,7 @@ class TypeRepoResolverTests: XCTestCase {
             repo.resolver(for: .name("Baz"), scopeName: "Session"),
             .derived(
                 from: "Singleton",
-                resolver: .external(
-                    member: .property(from: .name("AppExternal"), name: "baz")
-                )
+                resolver: .external
             )
         )
         XCTAssertEqual(
@@ -365,7 +336,7 @@ class TypeRepoResolverTests: XCTestCase {
         }()
         let repo = try! TypeRepository(parsedData: parsedData)
         XCTAssertEqual(
-            repo.find(by: "Foo")?.parsed,
+            try! repo.find(by: "Foo")?.parsed,
             .alias(
                 ParsedTypealias(
                     name: "Foo",

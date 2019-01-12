@@ -16,16 +16,12 @@ class FactoryExtensionTests: XCTestCase {
             """
             // @saber.container(App)
             // @saber.scope(Singleton)
-            // @saber.externals(AppExternals)
+            // @saber.externals(Bar)
             protocol AppConfig {}
 
             // @saber.scope(Singleton)
             struct Foo {
                 init() {}
-            }
-
-            struct AppExternals {
-                let bar: Bar
             }
 
             extension Foo {
@@ -49,8 +45,7 @@ class FactoryExtensionTests: XCTestCase {
                                     FunctionInvocationArgument(
                                         name: "bar",
                                         typeResolver: .external(
-                                            from: TypeUsage(name: "AppExternals"),
-                                            kind: .property(name: "bar")
+                                            TypeUsage(name: "Bar")
                                         )
                                     )
                                 ]
@@ -69,16 +64,11 @@ class FactoryExtensionTests: XCTestCase {
             """
             // @saber.container(App)
             // @saber.scope(Singleton)
-            // @saber.externals(AppExternals)
+            // @saber.externals(Bar, Baz)
             protocol AppConfig {}
 
             // @saber.scope(Singleton)
             struct Foo {}
-
-            struct AppExternals {
-                let bar: Bar
-                let baz: Baz
-            }
 
             extension Foo {
 
@@ -109,8 +99,7 @@ class FactoryExtensionTests: XCTestCase {
                                 MemberInjection(
                                     name: "bar",
                                     typeResolver: .external(
-                                        from: TypeUsage(name: "AppExternals"),
-                                        kind: .property(name: "bar")
+                                        TypeUsage(name: "Bar")
                                     )
                                 )
                             ],
@@ -121,8 +110,7 @@ class FactoryExtensionTests: XCTestCase {
                                         FunctionInvocationArgument(
                                             name: "baz",
                                             typeResolver: .external(
-                                                from: TypeUsage(name: "AppExternals"),
-                                                kind: .property(name: "baz")
+                                                TypeUsage(name: "Baz")
                                             )
                                         )
                                     ]

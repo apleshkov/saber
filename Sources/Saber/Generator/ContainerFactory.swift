@@ -49,30 +49,14 @@ extension ContainerFactory {
 
     private func makeContainerExternals(for scope: TypeRepository.Scope) throws -> [ContainerExternal] {
         Logger?.info("Making externals...")
-        var dict: [TypeRepository.Key : ContainerExternal] = [:]
-        for (_, member) in scope.externals {
-            let fromKey = member.fromKey
-            var external: ContainerExternal = try {
-                if let external = dict[fromKey] {
-                    return external
-                }
-                let usage = try makeTypeUsage(from: fromKey, in: scope)
-                return ContainerExternal(type: usage, kinds: [])
-            }()
-            Logger?.debug("External: '\(fromKey)'")
-            switch member {
-            case .method(_, let parsedMethod):
-                Logger?.debug("- \(parsedMethod.name)")
-                let args = try makeArguments(for: parsedMethod, in: scope)
-                external.kinds.append(.method(name: parsedMethod.name, args: args))
-                
-            case .property(_, let name):
-                Logger?.debug("- \(name)")
-                external.kinds.append(.property(name: name))
-            }
-            dict[fromKey] = external
+        var result: [ContainerExternal] = []
+        for key in scope.externals {
+            let usage = try makeTypeUsage(from: key, in: scope)
+            let external = ContainerExternal(type: usage)
+            result.append(external)
+            Logger?.debug("External: '\(key)'")
         }
-        return dict.map { $0.value }
+        return result
     }
 
     private func makeServices(for scope: TypeRepository.Scope) throws -> [Service] {
@@ -166,22 +150,8 @@ extension ContainerFactory {
         case .binder(let binderKey):
             let binderInfo = try repo.find(by: binderKey)
             return .bound(typeUsage, to: try makeTypeUsage(from: binderInfo, in: scope))
-        case .external(let member):
-            switch member {
-            case .method(let fromKey, let parsedMethod):
-                let fromUsage = try makeTypeUsage(from: fromKey, in: scope)
-                let args = try makeArguments(for: parsedMethod, in: scope)
-                return .external(
-                    from: fromUsage,
-                    kind: .method(name: parsedMethod.name, args: args)
-                )
-            case .property(let fromKey, let name):
-                let fromUsage = try makeTypeUsage(from: fromKey, in: scope)
-                return .external(
-                    from: fromUsage,
-                    kind: .property(name: name)
-                )
-            }
+        case .external:
+            return .external(typeUsage)
         case .derived(let fromName, let fromResolver):
             guard let fromScope = repo.scopes[fromName] else {
                 throw Throwable.message("Unknown scope: '\(fromName)'")
@@ -200,7 +170,7 @@ extension ContainerFactory {
 
     private func makeResolver(for parsedUsage: ParsedTypeUsage, in scope: TypeRepository.Scope) throws -> TypeResolver<TypeUsage> {
         Logger?.debug("Making type resolver for {\(scope.name)} '\(parsedUsage.fullName)'...")
-        guard let info = repo.find(by: parsedUsage.genericName) else {
+        guard let info = try repo.find(by: parsedUsage.genericName) else {
             // Container?
             if let parsedContainer = repo.container(by: parsedUsage.name) {
                 let repoKey = TypeRepository.Key(name: parsedContainer.name, moduleName: parsedContainer.moduleName)
