@@ -88,8 +88,8 @@ class ContainerParserTests: XCTestCase {
                         ParsedTypeUsage(name: "BarContainer")
                     ],
                     externals: [
-                        ParsedTypeUsage(name: "FooExternal"),
-                        ParsedTypeUsage(name: "BarExternal")
+                        ParsedContainerExternal(type: ParsedTypeUsage(name: "FooExternal"), refType: .strong),
+                        ParsedContainerExternal(type: ParsedTypeUsage(name: "BarExternal"), refType: .strong)
                     ],
                     isThreadSafe: true,
                     imports: ["UIKit"]

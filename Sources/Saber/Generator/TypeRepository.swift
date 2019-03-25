@@ -60,7 +60,7 @@ extension TypeRepository {
         var container: ParsedContainer
         var keys: Set<Key>
         var dependencies: [ScopeName]
-        var externals: [Key]
+        var externals: [(key: Key, parsed: ParsedContainerExternal)]
         var providers: [Key : (of: Key, method: ParsedMethod, returnType: ParsedTypeUsage)]
         var binders: [Key : Key]
     }
@@ -71,7 +71,7 @@ extension TypeRepository {
         case provider(Key)
         case binder(Key)
         case derived(from: ScopeName, resolver: Resolver)
-        case external
+        case external(ParsedTypeUsage)
     }
 }
 
@@ -341,9 +341,10 @@ extension TypeRepository {
     private func fillExternals(parsedData: ParsedData) throws {
         Logger?.info("Processing externals...")
         for (_, parsedContainer) in parsedData.containers {
-            var externals: [Key] = []
-            try parsedContainer.externals.forEach { (usage) in
-                Logger?.debug("External '\(usage.genericName)'")
+            var externals: [(Key, ParsedContainerExternal)] = []
+            try parsedContainer.externals.forEach { (anExternal) in
+                let usage = anExternal.type
+                Logger?.debug("External \(anExternal.refType) '\(usage.genericName)'")
                 let info: Info
                 if let foundInfo = try find(by: usage.genericName) {
                     info = foundInfo
@@ -356,7 +357,7 @@ extension TypeRepository {
                     )
                     register(info)
                 }
-                externals.append(info.key)
+                externals.append((info.key, anExternal))
             }
             let scopeKey = parsedContainer.scopeName
             scopes[scopeKey]?.externals = externals
@@ -371,8 +372,8 @@ extension TypeRepository {
             for key in scope.keys {
                 dict[key] = .explicit
             }
-            for key in scope.externals {
-                dict[key] = .external
+            for external in scope.externals {
+                dict[external.key] = .external(external.parsed.type)
             }
             for (providerKey, entry) in scope.providers {
                 dict[entry.of] = .provider(providerKey)

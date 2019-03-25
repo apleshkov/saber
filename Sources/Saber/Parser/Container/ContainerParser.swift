@@ -23,7 +23,7 @@ class ContainerParser {
         var foundName: String? = nil
         var foundScopeName: String? = nil
         var foundDependencies: [ParsedTypeUsage] = []
-        var foundExternals: [ParsedTypeUsage] = []
+        var foundExternals: [ParsedContainerExternal] = []
         var foundImports: [String] = []
         var isThreadSafe = false
         annotations.forEach {

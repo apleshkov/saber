@@ -51,8 +51,3 @@ public struct Container: Equatable {
         return result
     }
 }
-
-struct ContainerExternal: Equatable {
-    
-    var type: TypeUsage
-}

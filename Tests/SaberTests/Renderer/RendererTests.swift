@@ -171,4 +171,56 @@ class RendererTests: XCTestCase {
             """
         )
     }
+    
+    func testMultipleDependenciesAndExternals() {
+        let factory = ParsedDataFactory()
+        try! FileParser(contents:
+            """
+            // @saber.container(FooContainer)
+            // @saber.scope(Foo)
+            protocol FooContaining {}
+
+            // @saber.container(BarContainer)
+            // @saber.scope(Bar)
+            protocol BarContaining {}
+
+            // @saber.container(QuuxContainer)
+            // @saber.scope(Quux)
+            // @saber.dependsOn(FooContainer, BarContainer)
+            // @saber.externals(ExternalA, ExternalB)
+            protocol QuuxContaining {}
+            
+            """
+            ).parse(to: factory)
+        let repo = try! TypeRepository(parsedData: factory.make())
+        let containers = try! ContainerFactory(repo: repo).make().test_sorted()
+        let quuxContainer = containers.test_sorted()[2]
+        let data = ContainerDataFactory().make(from: quuxContainer)
+        let out = Renderer(data: data).render()
+        XCTAssertEqual(
+            out,
+            """
+            import Foundation
+
+            public class QuuxContainer: QuuxContaining {
+
+                public unowned let fooContainer: FooContainer
+
+                public unowned let barContainer: BarContainer
+
+                public let externalA: ExternalA
+
+                public let externalB: ExternalB
+
+                public init(fooContainer: FooContainer, barContainer: BarContainer, externalA: ExternalA, externalB: ExternalB) {
+                    self.fooContainer = fooContainer
+                    self.barContainer = barContainer
+                    self.externalA = externalA
+                    self.externalB = externalB
+                }
+
+            }
+            """
+        )
+    }
 }

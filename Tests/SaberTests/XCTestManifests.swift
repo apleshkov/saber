@@ -14,7 +14,10 @@ extension BasicContainerTests {
         ("testInheritance", testInheritance),
         ("testInitArguments", testInitArguments),
         ("testName", testName),
+        ("testStrongExternals", testStrongExternals),
         ("testThreadSafe", testThreadSafe),
+        ("testUnownedExternals", testUnownedExternals),
+        ("testWeakExternals", testWeakExternals),
     ]
 }
 
@@ -193,6 +196,9 @@ extension FactoryExternalTests {
         ("testInitializer", testInitializer),
         ("testNested", testNested),
         ("testOptional", testOptional),
+        ("testUnowned", testUnowned),
+        ("testUnwrapped", testUnwrapped),
+        ("testWeak", testWeak),
     ]
 }
 
@@ -322,7 +328,6 @@ extension RendererLazyTests {
 extension RendererModuleTests {
     static let __allTests = [
         ("testModules", testModules),
-        ("testMultipleDependenciesAndExternals", testMultipleDependenciesAndExternals),
     ]
 }
 
@@ -332,6 +337,7 @@ extension RendererTests {
         ("testEmptyInitializer", testEmptyInitializer),
         ("testGettersMakersInjectors", testGettersMakersInjectors),
         ("testInheritanceAndImports", testInheritanceAndImports),
+        ("testMultipleDependenciesAndExternals", testMultipleDependenciesAndExternals),
         ("testStoredProperties", testStoredProperties),
     ]
 }

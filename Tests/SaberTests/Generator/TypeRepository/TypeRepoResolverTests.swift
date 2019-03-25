@@ -84,11 +84,11 @@ class TypeRepoResolverTests: XCTestCase {
         let repo = try! TypeRepository(parsedData: parsedData)
         XCTAssertEqual(
             repo.resolver(for: .name("Foo"), scopeName: "Singleton"),            
-            .external
+            .external(ParsedTypeUsage(name: "Foo"))
         )
         XCTAssertEqual(
             repo.resolver(for: .name("BarModule.Bar"), scopeName: "Singleton"),
-            .external
+            .external(ParsedTypeUsage(name: "BarModule.Bar", isOptional: true))
         )
         XCTAssertEqual(
             repo.resolver(for: .name("Bar"), scopeName: "Singleton"),
@@ -96,7 +96,10 @@ class TypeRepoResolverTests: XCTestCase {
         )
         XCTAssertEqual(
             repo.resolver(for: .name("Quux<Int>"), scopeName: "Singleton"),
-            .external
+            .external(
+                ParsedTypeUsage(name: "Quux", isUnwrapped: true)
+                    .add(generic: ParsedTypeUsage(name: "Int"))
+            )
         )
     }
     
@@ -346,7 +349,9 @@ class TypeRepoResolverTests: XCTestCase {
             repo.resolver(for: .name("Baz"), scopeName: "Session"),
             .derived(
                 from: "Singleton",
-                resolver: .external
+                resolver: .external(
+                    ParsedTypeUsage(name: "Baz")
+                )
             )
         )
         XCTAssertEqual(

@@ -14,16 +14,20 @@ struct TypeUsage: SomeType, Equatable {
     var moduleName: String?
     
     var isOptional: Bool
+    
+    var isUnwrapped: Bool
 
     var generics: [TypeUsage]
 
     init(name: String,
          moduleName: String? = nil,
          isOptional: Bool = false,
+         isUnwrapped: Bool = false,
          generics: [TypeUsage] = []) {
         self.name = name
         self.moduleName = moduleName
         self.isOptional = isOptional
+        self.isUnwrapped = isUnwrapped
         self.generics = generics
     }
     
@@ -42,6 +46,9 @@ struct TypeUsage: SomeType, Equatable {
         }
         if isOptional {
             fullName += "?"
+        }
+        if isUnwrapped {
+            fullName += "!"
         }
         return fullName
     }

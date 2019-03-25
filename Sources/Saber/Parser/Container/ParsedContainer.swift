@@ -19,7 +19,7 @@ struct ParsedContainer: Equatable {
 
     var dependencies: [ParsedTypeUsage]
 
-    var externals: [ParsedTypeUsage]
+    var externals: [ParsedContainerExternal]
     
     var imports: [String]
 
@@ -29,7 +29,7 @@ struct ParsedContainer: Equatable {
          scopeName: String,
          protocolName: String,
          dependencies: [ParsedTypeUsage] = [],
-         externals: [ParsedTypeUsage] = [],
+         externals: [ParsedContainerExternal] = [],
          isThreadSafe: Bool = false,
          imports: [String] = []) {
         self.name = name

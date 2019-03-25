@@ -37,8 +37,8 @@ class ContainerAnnotationParser {
         }
         if rawString.hasPrefix(Prefix.externals),
             let args = AnnotationParserHelper.arguments(from: rawString, prefix: Prefix.externals) {
-            let types = args.compactMap { TypeUsageParser.parse($0) }
-            return ContainerAnnotation.externals(types)
+            let externals = args.compactMap { ContainerExternalParser.parse($0) }
+            return ContainerAnnotation.externals(externals)
         }
         if rawString.hasPrefix(Prefix.imports),
             let args = AnnotationParserHelper.arguments(from: rawString, prefix: Prefix.imports) {

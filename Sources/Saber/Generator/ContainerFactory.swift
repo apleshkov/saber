@@ -50,11 +50,11 @@ extension ContainerFactory {
     private func makeContainerExternals(for scope: TypeRepository.Scope) throws -> [ContainerExternal] {
         Logger?.info("Making externals...")
         var result: [ContainerExternal] = []
-        for key in scope.externals {
-            let usage = try makeTypeUsage(from: key, in: scope)
-            let external = ContainerExternal(type: usage)
+        for entry in scope.externals {
+            let usage = makeTypeUsage(from: entry.parsed.type)
+            let external = ContainerExternal(type: usage, refType: entry.parsed.refType)
             result.append(external)
-            Logger?.debug("External: '\(key)'")
+            Logger?.debug("External: '\(entry.parsed.fullName)'")
         }
         return result
     }
@@ -149,8 +149,8 @@ extension ContainerFactory {
         case .binder(let binderKey):
             let binderInfo = try repo.find(by: binderKey)
             return .bound(typeUsage, to: try makeTypeUsage(from: binderInfo, in: scope))
-        case .external:
-            return .external(typeUsage)
+        case .external(let parsedTypeUsage):
+            return .external(makeTypeUsage(from: parsedTypeUsage))
         case .derived(let fromName, let fromResolver):
             guard let fromScope = repo.scopes[fromName] else {
                 throw Throwable.message("Unknown scope: '\(fromName)'")
@@ -216,7 +216,7 @@ extension ContainerFactory {
         case .type(_):
             let decl = try ensure(info: info, in: scope)
             var usage = TypeUsage(name: decl.declaration.name, moduleName: info.key.moduleName)
-            usage.isOptional = decl.declaration.isOptional
+            usage.isOptional = decl.declaration.isOptional            
             return usage
         case .usage(let parsedUsage):
             return makeTypeUsage(from: parsedUsage)
@@ -228,6 +228,7 @@ extension ContainerFactory {
     private func makeTypeUsage(from parsedUsage: ParsedTypeUsage) -> TypeUsage {
         var usage = TypeUsage(name: parsedUsage.name)
         usage.isOptional = parsedUsage.isOptional
+        usage.isUnwrapped = parsedUsage.isUnwrapped
         usage.generics = parsedUsage.generics.map {
             return makeTypeUsage(from: $0)
         }
@@ -237,7 +238,11 @@ extension ContainerFactory {
     private func makeTypeUsage(from parsedAlias: ParsedTypealias) throws -> TypeUsage {
         switch parsedAlias.target {
         case .type(let parsedUsage):
-            return TypeUsage(name: parsedAlias.name, isOptional: parsedUsage.isOptional)
+            return TypeUsage(
+                name: parsedAlias.name,
+                isOptional: parsedUsage.isOptional,
+                isUnwrapped: parsedUsage.isUnwrapped
+            )
         case .raw(let str):
             throw Throwable.message("Unable to create 'TypeUsage' from '\(str)'")
         }

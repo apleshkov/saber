@@ -11,7 +11,7 @@ enum ContainerAnnotation: Equatable {
     case name(String)
     case scope(String)
     case dependencies([ParsedTypeUsage])
-    case externals([ParsedTypeUsage])
+    case externals([ParsedContainerExternal])
     case threadSafe
     case imports([String])
 }

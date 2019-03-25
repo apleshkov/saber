@@ -89,27 +89,59 @@ class ContainerAnnTests: XCTestCase {
         XCTAssertEqual(
             ContainerAnnotationParser.parse("externals(Foo)"),
             ContainerAnnotation.externals([
-                ParsedTypeUsage(name: "Foo")
+                ParsedContainerExternal(type: ParsedTypeUsage(name: "Foo"), refType: .strong)
+                ])
+        )
+        XCTAssertEqual(
+            ContainerAnnotationParser.parse("externals(weakFoo)"),
+            ContainerAnnotation.externals([
+                ParsedContainerExternal(type: ParsedTypeUsage(name: "weakFoo"), refType: .strong)
+                ])
+        )
+        XCTAssertEqual(
+            ContainerAnnotationParser.parse("externals(unownedFoo)"),
+            ContainerAnnotation.externals([
+                ParsedContainerExternal(type: ParsedTypeUsage(name: "unownedFoo"), refType: .strong)
+                ])
+        )
+        XCTAssertEqual(
+            ContainerAnnotationParser.parse("externals(weak     Foo)"),
+            ContainerAnnotation.externals([
+                ParsedContainerExternal(type: ParsedTypeUsage(name: "Foo"), refType: .weak)
+                ])
+        )
+        XCTAssertEqual(
+            ContainerAnnotationParser.parse("externals(unowned     Foo)"),
+            ContainerAnnotation.externals([
+                ParsedContainerExternal(type: ParsedTypeUsage(name: "Foo"), refType: .unowned)
                 ])
         )
         XCTAssertEqual(
             ContainerAnnotationParser.parse("externals(Foo, Bar)"),
             ContainerAnnotation.externals([
-                ParsedTypeUsage(name: "Foo"),
-                ParsedTypeUsage(name: "Bar")
+                ParsedContainerExternal(type: ParsedTypeUsage(name: "Foo"), refType: .strong),
+                ParsedContainerExternal(type: ParsedTypeUsage(name: "Bar"), refType: .strong)
                 ])
         )
         XCTAssertEqual(
             ContainerAnnotationParser.parse("externals(,Foo,)"),
             ContainerAnnotation.externals([
-                ParsedTypeUsage(name: "Foo")
+                ParsedContainerExternal(type: ParsedTypeUsage(name: "Foo"), refType: .strong)
                 ])
         )
         XCTAssertEqual(
             ContainerAnnotationParser.parse("externals(Foo?, Bar!)"),
             ContainerAnnotation.externals([
-                ParsedTypeUsage(name: "Foo", isOptional: true),
-                ParsedTypeUsage(name: "Bar", isUnwrapped: true)
+                ParsedContainerExternal(type: ParsedTypeUsage(name: "Foo", isOptional: true), refType: .strong),
+                ParsedContainerExternal(type: ParsedTypeUsage(name: "Bar", isUnwrapped: true), refType: .strong)
+                ])
+        )
+        XCTAssertEqual(
+            ContainerAnnotationParser.parse("externals(weak Foo?, unowned Bar!, Quux)"),
+            ContainerAnnotation.externals([
+                ParsedContainerExternal(type: ParsedTypeUsage(name: "Foo", isOptional: true), refType: .weak),
+                ParsedContainerExternal(type: ParsedTypeUsage(name: "Bar", isUnwrapped: true), refType: .unowned),
+                ParsedContainerExternal(type: ParsedTypeUsage(name: "Quux"), refType: .strong)
                 ])
         )
     }

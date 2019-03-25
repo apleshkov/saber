@@ -63,8 +63,8 @@ class FactoryContainerTests: XCTestCase {
                     TypeUsage(name: "BarContainer")
                 ],
                 externals: [
-                    ContainerExternal(type: TypeUsage(name: "FooExternal")),
-                    ContainerExternal(type: TypeUsage(name: "BarExternal"))
+                    ContainerExternal(type: TypeUsage(name: "FooExternal"), refType: .strong),
+                    ContainerExternal(type: TypeUsage(name: "BarExternal"), refType: .strong)
                 ]
             )
         )

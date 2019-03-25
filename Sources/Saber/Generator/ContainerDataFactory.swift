@@ -37,7 +37,16 @@ public class ContainerDataFactory {
         container.externals.forEach {
             let name = memberName(of: $0.type)
             let typeName = $0.type.fullName(modular: true)
-            data.storedProperties.append(["\(config.accessLevel) let \(name): \(typeName)"])
+            let decl: String
+            switch $0.refType {
+            case .strong:
+                decl = "let"
+            case .weak:
+                decl = "weak var"
+            case .unowned:
+                decl = "unowned let"
+            }
+            data.storedProperties.append(["\(config.accessLevel) \(decl) \(name): \(typeName)"])
             data.initializer.args.append((name: name, typeName: typeName))
             data.initializer.storedProperties.append("self.\(name) = \(name)")
             Logger?.debug("- external: \(name): \(typeName)")
