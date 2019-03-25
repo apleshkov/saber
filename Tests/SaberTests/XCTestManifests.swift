@@ -231,6 +231,7 @@ extension FactoryLazyTypealiasTests {
 extension FactoryProvidedTests {
     static let __allTests = [
         ("testBasic", testBasic),
+        ("testKnownOptional", testKnownOptional),
         ("testNested", testNested),
     ]
 }
@@ -383,6 +384,7 @@ extension TypeRepoResolverTests {
         ("testProvided2", testProvided2),
         ("testProvided3", testProvided3),
         ("testProvided4", testProvided4),
+        ("testProvided5", testProvided5),
     ]
 }
 

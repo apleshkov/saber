@@ -224,6 +224,45 @@ class TypeRepoResolverTests: XCTestCase {
         )
     }
     
+    func testProvided5() {
+        let parsedData: ParsedData = {
+            let factory = ParsedDataFactory()
+            try! FileParser(contents:
+                """
+                // @saber.container(App)
+                // @saber.scope(Singleton)
+                protocol AppConfig {}
+
+                class Foo {}
+
+                // @saber.scope(Singleton)
+                class FooProvider {
+                    // @saber.provider
+                    func provide() -> Foo? {}
+                }
+
+                struct Bar {}
+
+                // @saber.scope(Singleton)
+                class BarProvider {
+                    // @saber.provider
+                    func provide() -> Bar? {}
+                }
+                """
+                ).parse(to: factory)
+            return factory.make()
+        }()
+        let repo = try! TypeRepository(parsedData: parsedData)
+        XCTAssertEqual(
+            repo.resolver(for: .name("Foo"), scopeName: "Singleton"),
+            .provider(.name("FooProvider"))
+        )
+        XCTAssertEqual(
+            repo.resolver(for: .name("Bar"), scopeName: "Singleton"),
+            .provider(.name("BarProvider"))
+        )
+    }
+    
     func testBound() {
         let parsedData: ParsedData = {
             let factory = ParsedDataFactory()

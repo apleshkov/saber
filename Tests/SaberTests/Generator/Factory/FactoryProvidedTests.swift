@@ -123,4 +123,76 @@ class FactoryProvidedTests: XCTestCase {
             ]
         )
     }
+    
+    func testKnownOptional() {
+        let parsedFactory = ParsedDataFactory()
+        try! FileParser(contents:
+            """
+            // @saber.container(App)
+            // @saber.scope(Singleton)
+            protocol AppConfig {}
+
+            class FileLogger {}
+
+            // @saber.scope(Singleton)
+            // @saber.cached
+            class LoggerProvider {
+                // @saber.provider
+                func provide() -> FileLogger? {}
+            }
+
+            // @saber.scope(Singleton)
+            // @saber.cached
+            class NetworkManager {
+                // @saber.inject
+                var logger: FileLogger?
+            }
+            """
+            ).parse(to: parsedFactory)
+        let repo = try! TypeRepository(parsedData: parsedFactory.make())
+        let containers = try! ContainerFactory(repo: repo).make()
+        let loggerProvider = TypeDeclaration(name: "LoggerProvider", isReference: true)
+        XCTAssertEqual(
+            containers.map { $0.services.test_sorted() },
+            [
+                [
+                    Service(
+                        typeResolver: .provided(
+                            TypeUsage(name: "FileLogger", isOptional: true),
+                            by: TypeProvider(
+                                decl: loggerProvider,
+                                methodName: "provide"
+                            )
+                        ),
+                        storage: .none
+                    ),
+                    Service(
+                        typeResolver: .explicit(loggerProvider),
+                        storage: .cached
+                    ),
+                    Service(
+                        typeResolver: .explicit(
+                            TypeDeclaration(
+                                name: "NetworkManager",
+                                isReference: true,
+                                memberInjections: [
+                                    MemberInjection(
+                                        name: "logger",
+                                        typeResolver: .provided(
+                                            TypeUsage(name: "FileLogger", isOptional: true),
+                                            by: TypeProvider(
+                                                decl: loggerProvider,
+                                                methodName: "provide"
+                                            )
+                                        )
+                                    )
+                                ]
+                            )
+                        ),
+                        storage: .cached
+                    )
+                ]
+            ]
+        )
+    }
 }

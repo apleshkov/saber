@@ -61,7 +61,7 @@ extension TypeRepository {
         var keys: Set<Key>
         var dependencies: [ScopeName]
         var externals: [Key]
-        var providers: [Key : (of: Key, method: ParsedMethod)]
+        var providers: [Key : (of: Key, method: ParsedMethod, returnType: ParsedTypeUsage)]
         var binders: [Key : Key]
     }
     
@@ -312,7 +312,11 @@ extension TypeRepository {
                     )
                 )
             }
-            scopes[entry.scopeKey]?.providers[key] = (of: providedKey, method: method)
+            scopes[entry.scopeKey]?.providers[key] = (
+                of: providedKey,
+                method: method,
+                returnType: usage
+            )
             Logger?.debug("Provider '\(key)' -> '\(providedKey)'")
         }
     }

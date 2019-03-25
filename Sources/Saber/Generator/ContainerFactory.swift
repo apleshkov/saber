@@ -80,15 +80,13 @@ extension ContainerFactory {
             Logger?.debug("Service '\(key)' as explicit; cached: \(value.isCached)")
         }
         for (providerKey, data) in scope.providers {
-            let typeUsage = try makeTypeUsage(from: data.of, in: scope)
-            let typeProvider = try makeTypeProvider(key: providerKey, in: scope)
-            let typeResolver = TypeResolver<TypeDeclaration>.provided(typeUsage, by: typeProvider)
+            let typeResolver: TypeResolver<TypeDeclaration> = try makeProvidedTypeResolver(key: providerKey, in: scope)
             let service = Service(
                 typeResolver: typeResolver,
                 storage: .none
             )
             result.append(service)
-            Logger?.debug("Service '\(typeUsage.fullName(modular: true))' provided by '\(providerKey)'; cached: false")
+            Logger?.debug("Service '\(data.returnType.fullName)' provided by '\(providerKey)'; cached: false")
         }
         for (binderKey, mimicKey) in scope.binders {
             let typeUsage = try makeTypeUsage(from: mimicKey, in: scope)
@@ -123,17 +121,19 @@ extension ContainerFactory {
 
 extension ContainerFactory {
 
-    private func makeTypeProvider(key providerKey: TypeRepository.Key, in scope: TypeRepository.Scope) throws -> TypeProvider {
+    private func makeProvidedTypeResolver<T>(key providerKey: TypeRepository.Key, in scope: TypeRepository.Scope) throws -> TypeResolver<T> {
         guard let data = scope.providers[providerKey] else {
             throw Throwable.message("Unknown provider: '\(providerKey)' not found")
         }
+        let typeUsage = makeTypeUsage(from: data.returnType)
         let method = data.method
         let providerInfo = try repo.find(by: providerKey)
-        return TypeProvider(
+        let provider = TypeProvider(
             decl: try ensure(info: providerInfo, in: scope).declaration,
             methodName: method.name,
             args: try makeArguments(for: method, in: scope)
         )
+        return TypeResolver<T>.provided(typeUsage, by: provider)
     }
 
     private func makeResolver(for typeUsage: TypeUsage,
@@ -145,8 +145,7 @@ extension ContainerFactory {
         case .explicit:
             return .explicit(typeUsage)
         case .provider(let providerKey):
-            let provider = try makeTypeProvider(key: providerKey, in: scope)
-            return .provided(typeUsage, by: provider)
+            return try makeProvidedTypeResolver(key: providerKey, in: scope)
         case .binder(let binderKey):
             let binderInfo = try repo.find(by: binderKey)
             return .bound(typeUsage, to: try makeTypeUsage(from: binderInfo, in: scope))
