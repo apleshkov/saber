@@ -319,6 +319,24 @@ extension ProvidedTypeResolverTests {
     ]
 }
 
+extension RendererBoundTests {
+    static let __allTests = [
+        ("testOptional", testOptional),
+    ]
+}
+
+extension RendererExplicitTests {
+    static let __allTests = [
+        ("testOptional", testOptional),
+    ]
+}
+
+extension RendererExternalTests {
+    static let __allTests = [
+        ("testExternals", testExternals),
+    ]
+}
+
 extension RendererLazyTests {
     static let __allTests = [
         ("testLazy", testLazy),
@@ -450,6 +468,9 @@ public func __allTests() -> [XCTestCaseEntry] {
         testCase(PropertyAnnTests.__allTests),
         testCase(PropertyParserTests.__allTests),
         testCase(ProvidedTypeResolverTests.__allTests),
+        testCase(RendererBoundTests.__allTests),
+        testCase(RendererExplicitTests.__allTests),
+        testCase(RendererExternalTests.__allTests),
         testCase(RendererLazyTests.__allTests),
         testCase(RendererModuleTests.__allTests),
         testCase(RendererTests.__allTests),
