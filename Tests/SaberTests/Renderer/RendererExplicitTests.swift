@@ -1,22 +1,27 @@
 //
-//  RendererExternalTests.swift
+//  RendererExplicitTests.swift
 //  SaberTests
 //
-//  Created by Andrew Pleshkov on 25/03/2019.
+//  Created by Andrew Pleshkov on 26/03/2019.
 //
 
 import XCTest
 @testable import Saber
 
-class RendererExternalTests: XCTestCase {
+class RendererExplicitTests: XCTestCase {
     
-    func testExternals() {
+    func testOptional() {
         let factory = ParsedDataFactory()
         try! FileParser(contents:
             """
+            // @saber.scope(Singleton)
+            // @saber.cached
+            class Foo {
+                init?() {}
+            }
+
             // @saber.container(AppContainer)
             // @saber.scope(Singleton)
-            // @saber.externals(Foo, weak Bar?, unowned Baz)
             protocol AppContaining {}
             """
             ).parse(to: factory)
@@ -32,16 +37,20 @@ class RendererExternalTests: XCTestCase {
 
             public class AppContainer: AppContaining {
 
-                public let foo: Foo
+                private var cached_foo: Foo?
 
-                public weak var bar: Bar?
+                public init() {
+                }
 
-                public unowned let baz: Baz
+                public var foo: Foo? {
+                    if let cached = self.cached_foo { return cached }
+                    let foo = self.makeFoo()
+                    self.cached_foo = foo
+                    return foo
+                }
 
-                public init(foo: Foo, bar: Bar?, baz: Baz) {
-                    self.foo = foo
-                    self.bar = bar
-                    self.baz = baz
+                private func makeFoo() -> Foo? {
+                    return Foo()
                 }
 
             }
